@@ -11,7 +11,7 @@ data class Dictionary private constructor(
   init {
     require(words.size == entries.size)
   }
-  
+
   val size: Int = words.size
 
   operator fun contains(word: Word): Boolean = word in entries
@@ -19,7 +19,8 @@ data class Dictionary private constructor(
   operator fun contains(word: String): Boolean = word in words
 
   fun prune(bagOfLetters: Bag<Char>): Dictionary {
-    val prunedEntries = entries.filter { it.canConstructFrom(bagOfLetters) }
+    val prunedEntries =
+      entries.filter { it.canConstructFrom(bagOfLetters) && it.letters.length >= 3 }
     return Dictionary(prunedEntries.map { it.letters }.toSet(), prunedEntries.toSet())
   }
 
