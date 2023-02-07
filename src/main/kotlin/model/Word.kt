@@ -1,22 +1,25 @@
 package model
 
+import util.Bag
 import util.frequency
 
+@Suppress("DataClassPrivateConstructor")
 data class Word private constructor(val letters: String) {
-    private val lettersCount by lazy { letters.frequency() }
+  val lettersCount: Bag<Char> by lazy { letters.frequency() }
 
-    fun isEmpty(): Boolean = letters.isEmpty()
+  fun contains(letter: Char) = letter in lettersCount
 
-    fun contains(letter: Char) = letter in letters
+  fun canConstructFrom(bagOfInputLetters: Bag<Char>): Boolean =
+    (lettersCount - bagOfInputLetters).isEmpty()
 
-    fun canConstructFrom(bagOfLetters: List<Char>): Boolean {
-        val bagOfLettersCount = bagOfLetters.frequency()
-        return lettersCount.all { (l, c) ->
-            bagOfLettersCount.getValue(l) >= c
-        }
-    }
-
-    companion object {
-        fun from(letters: String): Word = Word(letters.filter { it.isLetter() }.uppercase())
-    }
+  companion object {
+    fun from(letters: String): Word? =
+      Word(
+        letters
+          .filter { it.isLetter() }
+          .uppercase()
+      ).takeIf {
+        it.letters.isNotEmpty()
+      }
+  }
 }

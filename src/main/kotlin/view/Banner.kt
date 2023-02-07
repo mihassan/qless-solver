@@ -7,10 +7,10 @@ import react.Props
 import react.dom.html.ReactHTML.h1
 
 val Banner = FC<Props> {
-    h1 {
-        css {
-            padding = 5.px
-        }
-        +"Q-Less Solver"
+  h1 {
+    css {
+      padding = 5.px
     }
+    +"Q-Less Solver"
+  }
 }

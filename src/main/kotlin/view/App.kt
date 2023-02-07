@@ -7,17 +7,17 @@ import react.create
 import react.useState
 
 enum class AppState {
-    Started,
-    Loading,
-    Loaded
+  Started,
+  Loading,
+  Loaded
 }
 
 val App = FC<Props> {
-    val mainScope = MainScope()
-    val state by useState { AppState.Started }
+  val mainScope = MainScope()
+  val state by useState { AppState.Started }
 
-    +Banner.create()
-    +Grid.create {
-        letters = "ABC\nDEF\nGHI".lines().map { it.toCharArray().map { "$it" } }
-    }
+  +Banner.create()
+  +Grid.create {
+    letters = "ABC\nDEF\nGHI".lines().map { it.toCharArray().map { "$it" } }
+  }
 }
