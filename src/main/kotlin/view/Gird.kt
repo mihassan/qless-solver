@@ -1,49 +1,25 @@
 package view
 
-import controller.DictionaryLoader
-import controller.Solver
-import csstype.*
+import csstype.FontFamily
+import csstype.px
+import csstype.rgb
+import emotion.react.css
+import model.Board
 import react.FC
 import react.Props
-import emotion.react.css
-import kotlinx.coroutines.*
-import model.Board
-import model.Dictionary
-import react.dom.html.ReactHTML.div
-import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.table
 import react.dom.html.ReactHTML.tbody
 import react.dom.html.ReactHTML.td
 import react.dom.html.ReactHTML.tr
-import react.useEffectOnce
-import react.useState
 
 external interface GridProps : Props {
   var letters: List<List<String>>
 }
 
 val Grid = FC<GridProps> { props ->
-  var letters by useState { props.letters }
-  var loaded by useState { false }
-  var dictionary by useState { Dictionary.of("") }
-
-  useEffectOnce {
-    MainScope().launch {
-      val dictionary = DictionaryLoader.loadDictionary()
-      val solver = Solver(dictionary)
-      val board: Board? = solver.solve("SKALDTXLANHD".toCharArray().toList())
-      if (board != null) {
-        letters = board.lines().map { it.map { "$it" } }
-      } else {
-        console.log("Could not solve.")
-      }
-      loaded = true
-    }
-  }
-
   table {
     tbody {
-      letters.forEach { row ->
+      props.letters.forEach { row ->
         tr {
           row.forEach { letter ->
             td {
@@ -57,20 +33,6 @@ val Grid = FC<GridProps> { props ->
             }
           }
         }
-      }
-    }
-  }
-
-  if (loaded) {
-    div {
-      p {
-        +"Loaded dictionary with ${dictionary.size} words."
-      }
-    }
-  } else {
-    div {
-      p {
-        +"Loading..."
       }
     }
   }

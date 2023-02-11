@@ -27,7 +27,7 @@ data class Dictionary private constructor(
     return Dictionary(prunedEntries.map { it.letters }.toSet(), prunedEntries.toSet())
   }
 
-  fun findLeastFrequentLetter(): Char = letterFrequency.entries.minBy { it.value }.key
+  fun findLeastFrequentLetter(): Char? = letterFrequency.entries.minByOrNull { it.value }?.key
 
   companion object {
     private val SPACE = Regex("""\s""")

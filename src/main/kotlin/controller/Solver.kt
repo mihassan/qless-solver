@@ -5,8 +5,8 @@ import util.Bag
 import util.frequency
 
 class Solver(private val dictionary: Dictionary) {
-  fun solve(inputLetters: List<Char>): Board? {
-    val bagOfInputLetters = inputLetters.frequency()
+  fun solve(inputLetters: String): Board? {
+    val bagOfInputLetters = inputLetters.filter(Char::isLetter).map(Char::uppercaseChar).frequency()
     val dictionary = dictionary.prune(bagOfInputLetters)
     val board = Board()
 
@@ -27,7 +27,9 @@ class Solver(private val dictionary: Dictionary) {
 
     fun solveInternal(depth: Int): Board? =
       if (board.allLettersUsedExactlyOnce(bagOfInputLetters)) {
+        // console.log(board.show())
         if (board.isValid(dictionary, bagOfInputLetters)) {
+          // console.log(board.show())
           board.clone()
         } else {
           null
@@ -52,7 +54,9 @@ class Solver(private val dictionary: Dictionary) {
         }
       }
 
-    board.place(dictionary.findLeastFrequentLetter(), Point(0, 0))
-    return solveInternal(1)
+    dictionary.findLeastFrequentLetter()?.let {
+      board.place(it, Point(0, 0))
+      return solveInternal(1)
+    } ?: return null
   }
 }

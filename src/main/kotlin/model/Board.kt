@@ -23,9 +23,11 @@ value class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
 
   inline fun letters(): Bag<Char> = cells.values.toList().frequency()
 
-  inline fun xRange(): IntRange = cells.keys.map(Point::x).run { min()..max() }
+  inline fun xRange(): IntRange =
+    if (cells.isEmpty()) (0..0) else cells.keys.map(Point::x).run { min()..max() }
 
-  inline fun yRange(): IntRange = cells.keys.map(Point::y).run { min()..max() }
+  inline fun yRange(): IntRange =
+    if (cells.isEmpty()) (0..0) else cells.keys.map(Point::y).run { min()..max() }
 
   inline fun show(): String = yRange().joinToString("\n") { y ->
     xRange().map { x ->
