@@ -1,6 +1,7 @@
 package model
 
 import util.Bag
+import util.frequency
 import util.words
 
 @Suppress("DataClassPrivateConstructor")
@@ -14,6 +15,8 @@ data class Dictionary private constructor(
 
   val size: Int = words.size
 
+  private val letterFrequency by lazy { words.joinToString("").frequency() }
+
   operator fun contains(word: Word): Boolean = word in entries
 
   operator fun contains(word: String): Boolean = word in words
@@ -23,6 +26,8 @@ data class Dictionary private constructor(
       entries.filter { it.canConstructFrom(bagOfLetters) && it.letters.length >= 3 }
     return Dictionary(prunedEntries.map { it.letters }.toSet(), prunedEntries.toSet())
   }
+
+  fun findLeastFrequentLetter(): Char = letterFrequency.entries.minBy { it.value }.key
 
   companion object {
     private val SPACE = Regex("""\s""")

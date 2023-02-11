@@ -39,8 +39,6 @@ value class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
 
   inline fun words(): List<String> = (lines() + columns()).flatMap(String::words)
 
-  inline fun clear() = cells.clear()
-
   inline fun clearCells(cellsToRemove: Iterable<Point>) = cellsToRemove.forEach { cells.remove(it) }
 
   inline fun place(letter: Char, cell: Point) = place("$letter", cell, Direction.Horizontal)
@@ -70,9 +68,9 @@ value class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
     }
 
   inline fun isValid(dictionary: Dictionary, bagOfInputLetters: Bag<Char>): Boolean =
-    allWordsAreValid(dictionary) && allInputLettersAreUsedExactlyOnce(bagOfInputLetters)
+    allWordsAreValid(dictionary) && allLettersUsedExactlyOnce(bagOfInputLetters)
 
-  inline fun allInputLettersAreUsedExactlyOnce(bagOfInputLetters: Bag<Char>): Boolean =
+  inline fun allLettersUsedExactlyOnce(bagOfInputLetters: Bag<Char>): Boolean =
     bagOfInputLetters == letters()
 
   inline fun allWordsAreValid(dictionary: Dictionary): Boolean =
