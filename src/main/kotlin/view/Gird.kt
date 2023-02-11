@@ -25,7 +25,7 @@ external interface GridProps : Props {
 val Grid = FC<GridProps> { props ->
   var letters by useState { props.letters }
   var loaded by useState { false }
-  var dictionary by useState { Dictionary.from("") }
+  var dictionary by useState { Dictionary.of("") }
 
   useEffectOnce {
     MainScope().launch {

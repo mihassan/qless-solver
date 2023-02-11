@@ -7,6 +7,6 @@ import model.Dictionary
 object DictionaryLoader {
   suspend fun loadDictionary(): Dictionary {
     val content = fetch("./dictionary/small.txt").text().await()
-    return Dictionary.from(content)
+    return Dictionary.of(content)
   }
 }

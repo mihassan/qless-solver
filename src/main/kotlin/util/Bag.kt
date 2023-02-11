@@ -10,12 +10,23 @@ value class Bag<T>(
 
   inline fun isEmpty(): Boolean = entries.isEmpty()
 
-  inline operator fun contains(entry: T): Boolean = entries.getValue(entry) > 0
+  inline val size: Int get() = entries.values.sum()
 
-  inline operator fun plus(entry: T): Bag<T> {
+  operator fun get(key: T): Int = entries.getValue(key)
+
+  operator fun set(key: T, count: Int) {
+    entries[key] = count
+  }
+
+  inline operator fun contains(key: T): Boolean = this[key] > 0
+
+  inline infix fun isSubSetOf(other: Bag<T>): Boolean =
+    entries.all { (t, c) -> c <= other[t] }
+
+  inline operator fun plus(key: T): Bag<T> {
     val newBag = Bag<T>()
     newBag += this
-    newBag += entry
+    newBag += key
     return newBag
   }
 
@@ -33,28 +44,28 @@ value class Bag<T>(
     return newBag
   }
 
-  inline operator fun minus(entry: T): Bag<T> {
+  inline operator fun minus(key: T): Bag<T> {
     val newBag = Bag<T>()
     newBag += this
-    newBag -= entry
+    newBag -= key
     return newBag
   }
 
-  inline operator fun plusAssign(entry: T) {
-    entries[entry] = entries.getValue(entry) + 1
+  inline operator fun plusAssign(key: T) {
+    this[key] += 1
   }
 
   inline operator fun plusAssign(other: Bag<T>) {
     other.entries.forEach { (t, c) ->
       require(c > 0)
-      entries[t] = entries.getValue(t) + c
+      this[t] += c
     }
   }
 
   inline operator fun minusAssign(key: T) {
-    val newValue = entries.getValue(key) - 1
+    val newValue = this[key] - 1
     if (newValue > 0) {
-      entries[key] = newValue
+      this[key] = newValue
     } else {
       entries.remove(key)
     }
@@ -62,9 +73,9 @@ value class Bag<T>(
 
   inline operator fun minusAssign(other: Bag<T>) {
     other.entries.forEach { (t, c) ->
-      val newValue = entries.getValue(t) - c
+      val newValue = this[t] - c
       if (newValue > 0) {
-        entries[t] = newValue
+        this[t] = newValue
       } else {
         entries.remove(t)
       }

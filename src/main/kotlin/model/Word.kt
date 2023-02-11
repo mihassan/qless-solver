@@ -5,12 +5,12 @@ import util.frequency
 
 @Suppress("DataClassPrivateConstructor")
 data class Word private constructor(val letters: String) {
-  val lettersCount: Bag<Char> by lazy { letters.frequency() }
+  private val bagOfLetters: Bag<Char> by lazy { letters.frequency() }
 
-  fun contains(letter: Char) = letter in lettersCount
+  fun contains(letter: Char) = letter in bagOfLetters
 
   fun canConstructFrom(bagOfInputLetters: Bag<Char>): Boolean =
-    (lettersCount - bagOfInputLetters).isEmpty()
+    bagOfLetters isSubSetOf bagOfInputLetters
 
   companion object {
     fun from(letters: String): Word? =

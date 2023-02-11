@@ -43,24 +43,21 @@ value class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
 
   inline fun clearCells(cellsToRemove: Iterable<Point>) = cellsToRemove.forEach { cells.remove(it) }
 
-  inline fun place(word: String, startCell: Point, dir: Direction): List<Pair<Point, Char>> = buildList {
-    word.forEachIndexed { idx, letter ->
-      val cell = startCell.moveBy(dir, idx)
-      if (cell !in cells) {
-        cells[cell] = letter
-        add(cell to letter)
-      }
-    }
-  }
+  inline fun place(letter: Char, cell: Point) = place("$letter", cell, Direction.Horizontal)
 
-  inline fun possiblePlacements(word: String, cell: Point): List<Pair<Point, Direction>> =
-    Direction.values().flatMap { dir ->
-      word.indices.map { idx ->
-        cell.moveBy(dir, -idx) to dir
-      }.filter { (startCell, dir) ->
-        canMergeWithoutConflict(word, startCell, dir) && canPlaceNewLetter(word, startCell, dir)
+  inline fun place(word: String, startCell: Point, dir: Direction): List<Point> =
+    buildList {
+      word.forEachIndexed { idx, letter ->
+        val cell = startCell.moveBy(dir, idx)
+        if (cell !in cells) {
+          cells[cell] = letter
+          add(cell)
+        }
       }
     }
+
+  inline fun canPlace(word: String, startCell: Point, dir: Direction): Boolean =
+    canMergeWithoutConflict(word, startCell, dir) && canPlaceNewLetter(word, startCell, dir)
 
   inline fun canMergeWithoutConflict(word: String, startCell: Point, dir: Direction): Boolean =
     word.withIndex().all { (idx, letter) ->

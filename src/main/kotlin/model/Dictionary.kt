@@ -25,11 +25,14 @@ data class Dictionary private constructor(
   }
 
   companion object {
-    fun from(words: Collection<String>): Dictionary {
+    private val SPACE = Regex("""\s""")
+
+    fun of(words: Collection<String>): Dictionary {
       val entries = words.mapNotNull { Word.from(it) }
       return Dictionary(entries.map { it.letters }.toSet(), entries.toSet())
     }
 
-    fun from(dictionary: String): Dictionary = from(dictionary.lines().flatMap { it.words() })
+    fun of(dictionary: String): Dictionary =
+      of(dictionary.lines().filterNot { SPACE in it }.flatMap { it.words() })
   }
 }
