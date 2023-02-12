@@ -4,7 +4,6 @@ import csstype.FontFamily
 import csstype.px
 import csstype.rgb
 import emotion.react.css
-import model.Board
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.table
@@ -18,6 +17,10 @@ external interface GridProps : Props {
 
 val Grid = FC<GridProps> { props ->
   table {
+    css {
+      paddingTop = 20.px
+      paddingBottom = 20.px
+    }
     tbody {
       props.letters.forEach { row ->
         tr {

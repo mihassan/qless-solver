@@ -3,55 +3,60 @@ package view
 import controller.DictionaryLoader
 import controller.Solver
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Dictionary
 import react.FC
 import react.Props
 import react.create
+import react.dom.html.ReactHTML.button
 import react.useEffect
 import react.useEffectOnce
 import react.useState
 
 enum class AppState {
-  STARTED,
-  LOADING,
-  WAITING,
+  PAGE_OPENED,
+  LOADING_DICTIONARY,
+  WAITING_FOR_INPUT,
   SOLVING,
-  SHOWING,
+  SHOWING_RESULT,
 }
 
 val App = FC<Props> {
   val mainScope = MainScope()
-  var state by useState { AppState.STARTED }
+  var state by useState { AppState.PAGE_OPENED }
   var dictionary by useState { Dictionary.of("") }
   var inputLetters by useState { "" }
-  var letters: List<List<String>> by useState { emptyList() }
+  var gridLetters: List<List<String>> by useState { emptyList() }
 
   useEffectOnce {
-    state = AppState.LOADING
+    state = AppState.LOADING_DICTIONARY
     mainScope.launch {
       dictionary = DictionaryLoader.loadDictionary()
-      state = AppState.WAITING
+      state = AppState.WAITING_FOR_INPUT
     }
   }
 
-  useEffect(state) {
+  useEffect {
     if (state == AppState.SOLVING) {
       mainScope.launch {
-        val result = Solver(dictionary).solve(inputLetters)
-        if (result != null) {
-          letters = result.lines().map { it.map { "$it" } }
+        delay(100)
+        if (gridLetters.isEmpty()) {
+          val result = Solver(dictionary).solve(inputLetters)
+          if (result != null) {
+            gridLetters = result.lines().map { it.map { "$it" } }
+          }
         }
-        state = AppState.SHOWING
+        state = AppState.SHOWING_RESULT
       }
     }
   }
 
   +Banner.create()
   when (state) {
-    AppState.STARTED -> +"Welcome"
-    AppState.LOADING -> +"Loading dictionary..."
-    AppState.WAITING -> {
+    AppState.PAGE_OPENED -> +"Welcome"
+    AppState.LOADING_DICTIONARY -> +"Loading dictionary..."
+    AppState.WAITING_FOR_INPUT -> {
       +InputForm.create {
         onSubmit = {
           inputLetters = it
@@ -59,14 +64,25 @@ val App = FC<Props> {
         }
       }
     }
-    AppState.SOLVING -> +"Solving, please wait..."
-    AppState.SHOWING -> {
-      if (letters.isNotEmpty()) {
+    AppState.SOLVING -> {
+      +"Solving, please wait..."
+    }
+    AppState.SHOWING_RESULT -> {
+      if (gridLetters.isNotEmpty()) {
+        +"Found a solution:"
         +Grid.create {
-          this.letters = letters
+          this.letters = gridLetters
         }
       } else {
         +"Sorry, could not find a solution."
+      }
+      button {
+        +"Reset"
+        onClick = {
+          inputLetters = ""
+          gridLetters = emptyList()
+          state = AppState.WAITING_FOR_INPUT
+        }
       }
     }
   }

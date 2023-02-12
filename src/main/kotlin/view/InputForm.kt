@@ -5,7 +5,9 @@ import emotion.react.css
 import react.FC
 import react.Props
 import react.dom.html.InputType
-import react.dom.html.ReactHTML
+import react.dom.html.ReactHTML.input
+import react.dom.html.ReactHTML.label
+import react.dom.html.ReactHTML.form
 import react.useState
 
 external interface InputFormProps : Props {
@@ -15,12 +17,12 @@ external interface InputFormProps : Props {
 val InputForm = FC<InputFormProps> { props ->
   var inputLetters by useState("")
 
-  ReactHTML.form {
-    ReactHTML.label {
+  form {
+    label {
       htmlFor = "inputLetters"
       +"Type input letters: "
     }
-    ReactHTML.input {
+    input {
       id = "inputLetters"
       type = InputType.text
       placeholder = "Type here"
@@ -28,7 +30,7 @@ val InputForm = FC<InputFormProps> { props ->
         inputLetters = event.target.value
       }
     }
-    ReactHTML.input {
+    input {
       css {
         marginLeft = 10.px
       }
