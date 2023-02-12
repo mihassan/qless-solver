@@ -1,8 +1,10 @@
 package view
 
 import csstype.FontFamily
+import csstype.FontSize
+import csstype.FontWeight
+import csstype.NamedColor
 import csstype.px
-import csstype.rgb
 import emotion.react.css
 import react.FC
 import react.Props
@@ -28,9 +30,12 @@ val Grid = FC<GridProps> { props ->
             td {
               css {
                 fontFamily = FontFamily.monospace
-                padding = 5.px
-                color = rgb(31, 63, 0)
-                backgroundColor = rgb(167, 167, 167)
+                fontSize = FontSize.large
+                fontWeight = FontWeight.bolder
+                padding = 10.px
+                color = NamedColor.black
+                backgroundColor =
+                  if (letter.isNotBlank()) NamedColor.lightgray else NamedColor.darkgray
               }
               +letter
             }

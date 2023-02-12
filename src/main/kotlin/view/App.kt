@@ -10,6 +10,7 @@ import react.FC
 import react.Props
 import react.create
 import react.dom.html.ReactHTML.button
+import react.dom.html.ReactHTML.p
 import react.useEffect
 import react.useEffectOnce
 import react.useState
@@ -53,9 +54,10 @@ val App = FC<Props> {
   }
 
   +Banner.create()
+
   when (state) {
-    AppState.PAGE_OPENED -> +"Welcome"
-    AppState.LOADING_DICTIONARY -> +"Loading dictionary..."
+    AppState.PAGE_OPENED -> p { +"Welcome" }
+    AppState.LOADING_DICTIONARY -> p { +"Loading dictionary..." }
     AppState.WAITING_FOR_INPUT -> {
       +InputForm.create {
         onSubmit = {
@@ -64,28 +66,29 @@ val App = FC<Props> {
         }
       }
     }
-    AppState.SOLVING -> {
-      +"Solving, please wait..."
-    }
+    AppState.SOLVING -> p { +"Solving, please wait..." }
     AppState.SHOWING_RESULT -> {
       if (gridLetters.isNotEmpty()) {
-        +"Found a solution:"
+        p { +"Found a solution:" }
         +Grid.create {
           this.letters = gridLetters
         }
       } else {
-        +"Sorry, could not find a solution."
+        p { +"Sorry, could not find a solution." }
       }
-      button {
-        +"Reset"
-        onClick = {
-          inputLetters = ""
-          gridLetters = emptyList()
-          state = AppState.WAITING_FOR_INPUT
+      p {
+        button {
+          +"Reset"
+          onClick = {
+            inputLetters = ""
+            gridLetters = emptyList()
+            state = AppState.WAITING_FOR_INPUT
+          }
         }
       }
     }
   }
+
   +Footer.create {
     appState = state
   }

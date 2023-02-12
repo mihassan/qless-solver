@@ -4,7 +4,9 @@ import csstype.px
 import emotion.react.css
 import react.FC
 import react.Props
+import react.dom.html.ButtonType
 import react.dom.html.InputType
+import react.dom.html.ReactHTML.button
 import react.dom.html.ReactHTML.input
 import react.dom.html.ReactHTML.label
 import react.dom.html.ReactHTML.form
@@ -30,12 +32,12 @@ val InputForm = FC<InputFormProps> { props ->
         inputLetters = event.target.value
       }
     }
-    input {
+    button {
       css {
         marginLeft = 10.px
       }
-      type = InputType.submit
-      value = "Solve"
+      type = ButtonType.submit
+      +"Solve"
     }
     onSubmit = { event ->
       props.onSubmit(inputLetters)
