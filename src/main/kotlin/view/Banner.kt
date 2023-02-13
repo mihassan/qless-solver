@@ -1,6 +1,7 @@
 package view
 
 import csstype.NamedColor
+import csstype.TextAlign
 import csstype.px
 import emotion.react.css
 import react.FC
@@ -12,6 +13,7 @@ val Banner = FC<Props> {
     css {
       padding = 10.px
       backgroundColor = NamedColor.lightblue
+      textAlign = TextAlign.center
     }
     +"Q-Less Solver"
   }

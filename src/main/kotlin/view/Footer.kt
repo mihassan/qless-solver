@@ -20,6 +20,7 @@ val Footer = FC<FooterProps> { props ->
       width = 100.pct
       fontSize = FontSize.small
       backgroundColor = NamedColor.lightgray
+      textAlign = TextAlign.end
     }
     +"Current state: ${props.appState}"
   }
