@@ -4,8 +4,8 @@ import csstype.px
 import emotion.react.css
 import react.FC
 import react.Props
+import web.html.InputType
 import react.dom.html.ButtonType
-import react.dom.html.InputType
 import react.dom.html.ReactHTML.button
 import react.dom.html.ReactHTML.input
 import react.dom.html.ReactHTML.label

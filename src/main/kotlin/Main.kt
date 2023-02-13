@@ -1,10 +1,13 @@
-import kotlinx.browser.document
 import react.create
 import react.dom.client.createRoot
 import view.App
+import web.dom.document
+import web.html.HTML.div
 
 fun main() {
-    val container = document.createElement("div")
-    createRoot(container).render(App.create())
-    document.body!!.appendChild(container)
+  val root = document.createElement(div)
+    .also { document.body.appendChild(it) }
+
+  createRoot(root)
+    .render(App.create())
 }
