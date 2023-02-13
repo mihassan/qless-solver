@@ -2,6 +2,8 @@ package view
 
 import controller.DictionaryLoader
 import controller.Solver
+import emotion.react.css
+import csstype.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -10,6 +12,7 @@ import react.FC
 import react.Props
 import react.create
 import react.dom.html.ReactHTML.button
+import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.p
 import react.useEffect
 import react.useEffectOnce
@@ -55,34 +58,39 @@ val App = FC<Props> {
 
   +Banner.create()
 
-  when (state) {
-    AppState.PAGE_OPENED -> p { +"Welcome" }
-    AppState.LOADING_DICTIONARY -> p { +"Loading dictionary..." }
-    AppState.WAITING_FOR_INPUT -> {
-      +InputForm.create {
-        onSubmit = {
-          inputLetters = it
-          state = AppState.SOLVING
-        }
-      }
+  div {
+    css {
+      padding = 10.px
     }
-    AppState.SOLVING -> p { +"Solving, please wait..." }
-    AppState.SHOWING_RESULT -> {
-      if (gridLetters.isNotEmpty()) {
-        p { +"Found a solution:" }
-        +Grid.create {
-          this.letters = gridLetters
+    when (state) {
+      AppState.PAGE_OPENED -> p { +"Welcome" }
+      AppState.LOADING_DICTIONARY -> p { +"Loading dictionary..." }
+      AppState.WAITING_FOR_INPUT -> {
+        +InputForm.create {
+          onSubmit = {
+            inputLetters = it
+            state = AppState.SOLVING
+          }
         }
-      } else {
-        p { +"Sorry, could not find a solution." }
       }
-      p {
-        button {
-          +"Reset"
-          onClick = {
-            inputLetters = ""
-            gridLetters = emptyList()
-            state = AppState.WAITING_FOR_INPUT
+      AppState.SOLVING -> p { +"Solving, please wait..." }
+      AppState.SHOWING_RESULT -> {
+        if (gridLetters.isNotEmpty()) {
+          p { +"Found a solution:" }
+          +Grid.create {
+            this.letters = gridLetters
+          }
+        } else {
+          p { +"Sorry, could not find a solution." }
+        }
+        p {
+          button {
+            +"Reset"
+            onClick = {
+              inputLetters = ""
+              gridLetters = emptyList()
+              state = AppState.WAITING_FOR_INPUT
+            }
           }
         }
       }

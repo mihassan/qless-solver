@@ -29,7 +29,7 @@ val Grid = FC<GridProps> { props ->
           row.forEach { letter ->
             td {
               css {
-                fontFamily = FontFamily.monospace
+                fontFamily = "Roboto Mono".unsafeCast<FontFamily>()
                 fontSize = FontSize.large
                 fontWeight = FontWeight.bolder
                 padding = 10.px

@@ -16,8 +16,8 @@ val Footer = FC<FooterProps> { props ->
       padding = 10.px
       position = Position.absolute
       boxSizing = BoxSizing.borderBox
-      bottom = 10.px
-      width = 960.px
+      bottom = 0.px
+      width = 100.pct
       fontSize = FontSize.small
       backgroundColor = NamedColor.lightgray
     }
