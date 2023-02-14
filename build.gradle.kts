@@ -13,6 +13,8 @@ dependencies {
     implementation(kotlinw("react"))
     implementation(kotlinw("react-dom"))
     implementation(kotlinw("emotion"))
+    implementation(kotlinw("mui"))
+    implementation(kotlinw("mui-icons"))
 }
 
 kotlin {
