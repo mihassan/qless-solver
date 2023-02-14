@@ -8,7 +8,7 @@ import react.FC
 import react.Props
 import react.dom.html.ReactHTML.h2
 
-val Banner = FC<Props> {
+val Header = FC<Props> {
   h2 {
     css {
       padding = 10.px
