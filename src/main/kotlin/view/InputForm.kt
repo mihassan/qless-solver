@@ -10,16 +10,11 @@ import mui.system.sx
 import react.FC
 import react.Props
 import react.useState
-import web.events.EventTarget
+import web.html.HTMLInputElement
 
 external interface InputFormProps : Props {
   var onSubmit: (String) -> Unit
 }
-
-private val EventTarget.value: String
-  get() {
-    return asDynamic().value
-  }
 
 val InputForm = FC<InputFormProps> { props ->
   var inputLetters by useState("")
@@ -31,8 +26,16 @@ val InputForm = FC<InputFormProps> { props ->
     }
     Input {
       id = "inputLetters"
+      onKeyDown = { event ->
+        if (event.key.any { !it.isLetter() }) {
+          event.preventDefault()
+        }
+      }
       onChange = { event ->
-        inputLetters = event.target.value
+        inputLetters = (event.target as HTMLInputElement).value
+      }
+      onSubmit = {
+        props.onSubmit(inputLetters)
       }
     }
     Button {
