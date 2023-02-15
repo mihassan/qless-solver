@@ -1,20 +1,27 @@
 package view
 
-import csstype.NamedColor
-import csstype.TextAlign
-import csstype.px
-import emotion.react.css
+import csstype.Position
+import mui.material.AppBar
+import mui.material.Toolbar
+import mui.material.Typography
+import mui.material.styles.TypographyVariant
+import mui.system.sx
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.h2
+import react.dom.html.ReactHTML
 
 val Header = FC<Props> {
-  h2 {
-    css {
-      padding = 10.px
-      backgroundColor = NamedColor.lightblue
-      textAlign = TextAlign.center
+  AppBar {
+    sx {
+      position = Position.sticky
     }
-    +"Q-Less Solver"
+    Toolbar {
+      Typography {
+        variant = TypographyVariant.h5
+        noWrap = true
+        component = ReactHTML.div
+        +"Q-Less Solver"
+      }
+    }
   }
 }

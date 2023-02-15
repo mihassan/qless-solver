@@ -2,27 +2,28 @@ package view
 
 import controller.DictionaryLoader
 import controller.Solver
-import csstype.*
-import emotion.react.css
+import csstype.px
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Dictionary
+import mui.material.Box
+import mui.material.Button
+import mui.material.ButtonVariant
+import mui.system.sx
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.p
-import react.dom.html.ReactHTML.button
 import react.useEffect
 import react.useEffectOnce
 import react.useState
 
-external interface ContemtProps : Props {
+external interface ContentProps : Props {
   var appState: AppState
   var onAppStateUpdate: (AppState) -> Unit
 }
 
-val Content = FC<ContemtProps> { props ->
+val Content = FC<ContentProps> { props ->
   val mainScope = MainScope()
   var dictionary by useState { Dictionary.of("") }
   var inputLetters by useState { "" }
@@ -53,9 +54,9 @@ val Content = FC<ContemtProps> { props ->
     }
   }
 
-  div {
-    css {
-      padding = 10.px
+  Box {
+    sx {
+      padding = 24.px
     }
     when (props.appState) {
       AppState.PAGE_OPENED -> p { +"Welcome" }
@@ -79,8 +80,12 @@ val Content = FC<ContemtProps> { props ->
           p { +"Sorry, could not find a solution." }
         }
         p {
-          button {
+          Button {
+            sx {
+              marginTop = 16.px
+            }
             +"Reset"
+            variant = ButtonVariant.outlined
             onClick = {
               inputLetters = ""
               gridLetters = emptyList()

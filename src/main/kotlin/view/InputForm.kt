@@ -1,47 +1,50 @@
 package view
 
 import csstype.px
-import emotion.react.css
+import mui.material.Button
+import mui.material.ButtonVariant
+import mui.material.FormControl
+import mui.material.Input
+import mui.material.InputLabel
+import mui.system.sx
 import react.FC
 import react.Props
-import web.html.InputType
-import react.dom.html.ButtonType
-import react.dom.html.ReactHTML.button
-import react.dom.html.ReactHTML.input
-import react.dom.html.ReactHTML.label
-import react.dom.html.ReactHTML.form
 import react.useState
+import web.events.EventTarget
 
 external interface InputFormProps : Props {
   var onSubmit: (String) -> Unit
 }
 
+private val EventTarget.value: String
+  get() {
+    return asDynamic().value
+  }
+
 val InputForm = FC<InputFormProps> { props ->
   var inputLetters by useState("")
 
-  form {
-    label {
+  FormControl {
+    InputLabel {
       htmlFor = "inputLetters"
       +"Type input letters: "
     }
-    input {
+    Input {
       id = "inputLetters"
-      type = InputType.text
-      placeholder = "Type here"
       onChange = { event ->
         inputLetters = event.target.value
       }
     }
-    button {
-      css {
-        marginLeft = 10.px
+    Button {
+      sx {
+        marginTop = 16.px
       }
-      type = ButtonType.submit
+      variant = ButtonVariant.outlined
       +"Solve"
-    }
-    onSubmit = { event ->
-      props.onSubmit(inputLetters)
-      event.preventDefault()
+      onClick = { event ->
+        props.onSubmit(inputLetters)
+        event.preventDefault()
+      }
     }
   }
 }

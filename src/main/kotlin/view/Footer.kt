@@ -1,27 +1,34 @@
 package view
 
-import csstype.*
-import emotion.react.css
+import csstype.Color
+import csstype.TextAlign
+import csstype.px
+import mui.material.Box
+import mui.material.Divider
+import mui.material.Typography
+import mui.material.styles.TypographyVariant
+import mui.system.sx
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.div
 
 external interface FooterProps : Props {
   var appState: AppState
 }
 
 val Footer = FC<FooterProps> { props ->
-  div {
-    css {
-      padding = 10.px
-      position = Position.absolute
-      boxSizing = BoxSizing.borderBox
-      bottom = 0.px
-      width = 100.pct
-      fontSize = FontSize.small
-      backgroundColor = NamedColor.lightgray
+  Box {
+    Divider {}
+    sx {
+      padding = 16.px
       textAlign = TextAlign.end
     }
-    +"Current state: ${props.appState}"
+    Typography {
+      sx {
+        color = Color("text.secondary")
+      }
+      variant = TypographyVariant.caption
+      +"Current state: ${props.appState}"
+    }
   }
 }
+
