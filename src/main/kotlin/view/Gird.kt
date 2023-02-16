@@ -27,8 +27,8 @@ val Grid = FC<GridProps> { props ->
   Grid {
     sx {
       display = Display.inlineGrid
-      gridTemplateRows = csstype.repeat(colCount, 1.fr)
-      gridTemplateColumns = csstype.repeat(rowCount, 1.fr)
+      gridTemplateRows = csstype.repeat(rowCount, 1.fr)
+      gridTemplateColumns = csstype.repeat(colCount, 1.fr)
       gap = 4.px
       placeItems = PlaceItems.center
     }
