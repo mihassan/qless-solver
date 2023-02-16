@@ -26,13 +26,15 @@ val InputForm = FC<InputFormProps> { props ->
     }
     Input {
       id = "inputLetters"
+      value = inputLetters
       onKeyDown = { event ->
         if (event.key.any { !it.isLetter() }) {
           event.preventDefault()
         }
       }
       onChange = { event ->
-        inputLetters = (event.target as HTMLInputElement).value
+        inputLetters =
+          (event.target as HTMLInputElement).value.filter { it.isLetter() }.uppercase().take(12)
       }
       onSubmit = {
         props.onSubmit(inputLetters)
