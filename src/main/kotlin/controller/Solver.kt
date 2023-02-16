@@ -9,6 +9,7 @@ class Solver(private val dictionary: Dictionary) {
     val bagOfInputLetters = inputLetters.filter(Char::isLetter).map(Char::uppercaseChar).frequency()
     val dictionary = dictionary.prune(bagOfInputLetters)
     val board = Board()
+    var words = mutableListOf<String>()
 
     val prunedDictionaryCache = mutableMapOf<Bag<Char>, Dictionary>()
     fun pruneDictionary(bagOfLetters: Bag<Char>): Dictionary =
@@ -27,9 +28,8 @@ class Solver(private val dictionary: Dictionary) {
 
     fun solveInternal(depth: Int): Board? =
       if (board.allLettersUsedExactlyOnce(bagOfInputLetters)) {
-        // console.log(board.show())
         if (board.isValid(dictionary, bagOfInputLetters)) {
-          // console.log(board.show())
+          console.log("Words used: ${words.joinToString(", ")}")
           board.clone()
         } else {
           null
@@ -41,9 +41,11 @@ class Solver(private val dictionary: Dictionary) {
               entry.letters.withIndex().firstNotNullOfOrNull { (offset, letter) ->
                 val startCell = commonCell.moveBy(dir, -offset)
                 if (letter == requiredLetter && board.canPlace(entry.letters, startCell, dir)) {
+                  words.add(entry.letters)
                   val newCells = board.place(entry.letters, startCell, dir)
                   val result = solveInternal(depth + 1)
                   board.clearCells(newCells)
+                  words.removeLast()
                   result
                 } else {
                   null
@@ -54,7 +56,10 @@ class Solver(private val dictionary: Dictionary) {
         }
       }
 
+    console.log("Dictionary size: ${dictionary.size}")
+    console.log(dictionary.words.joinToString(", "))
     dictionary.findLeastFrequentLetter()?.let {
+      console.log("Starting with letter: $it")
       board.place(it, Point(0, 0))
       return solveInternal(1)
     } ?: return null
