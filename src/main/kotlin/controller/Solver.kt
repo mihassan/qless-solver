@@ -9,7 +9,8 @@ class Solver(private val dictionary: Dictionary) {
     val bagOfInputLetters = inputLetters.filter(Char::isLetter).map(Char::uppercaseChar).frequency()
     val dictionary = dictionary.prune(bagOfInputLetters)
     val board = Board()
-    var words = mutableListOf<String>()
+    // Only used for debugging purpose.
+    val words = mutableListOf<String>()
 
     val prunedDictionaryCache = mutableMapOf<Bag<Char>, Dictionary>()
     fun pruneDictionary(bagOfLetters: Bag<Char>): Dictionary =
