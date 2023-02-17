@@ -2,6 +2,10 @@ package view
 
 import controller.DictionaryLoader
 import controller.Solver
+import csstype.AlignItems
+import csstype.Display
+import csstype.FlexDirection
+import csstype.JustifyContent
 import csstype.px
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -56,11 +60,12 @@ val Content = FC<ContentProps> { props ->
 
   Box {
     sx {
-      padding = 24.px
+      display = Display.flex
+      flexDirection = FlexDirection.column
+      alignItems = AlignItems.center
+      justifyContent = JustifyContent.center
     }
     when (props.appState) {
-      AppState.PAGE_OPENED -> p { +"Welcome" }
-      AppState.LOADING_DICTIONARY -> p { +"Loading dictionary..." }
       AppState.WAITING_FOR_INPUT -> {
         InputForm {
           onSubmit = {
@@ -72,7 +77,6 @@ val Content = FC<ContentProps> { props ->
       AppState.SOLVING -> p { +"Solving, please wait..." }
       AppState.SHOWING_RESULT -> {
         if (gridLetters.isNotEmpty()) {
-          p { +"Found a solution:" }
           Grid {
             this.letters = gridLetters
           }
@@ -94,6 +98,7 @@ val Content = FC<ContentProps> { props ->
           }
         }
       }
+      else -> {}
     }
   }
 }

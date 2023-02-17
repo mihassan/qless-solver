@@ -1,6 +1,7 @@
 package view
 
 import csstype.Color
+import csstype.FontSize
 import csstype.TextAlign
 import csstype.px
 import mui.material.Box
@@ -25,8 +26,8 @@ val Footer = FC<FooterProps> { props ->
     Typography {
       sx {
         color = Color("text.secondary")
+        fontSize = FontSize.small
       }
-      variant = TypographyVariant.caption
       +"Current state: ${props.appState}"
     }
   }

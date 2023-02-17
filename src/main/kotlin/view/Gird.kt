@@ -10,11 +10,14 @@ import csstype.PlaceItems
 import csstype.fr
 import csstype.px
 import csstype.rem
+import csstype.vmin
 import mui.material.Grid
 import mui.material.Paper
 import mui.system.sx
 import react.FC
 import react.Props
+import react.ReactElement
+import react.dom.html.ReactHTML
 
 external interface GridProps : Props {
   var letters: List<List<String>>
@@ -37,13 +40,12 @@ val Grid = FC<GridProps> { props ->
         Paper {
           sx {
             display = Display.flex
-            width = 2.rem
-            height = 2.rem
-            fontSize = FontSize.large
-            fontWeight = FontWeight.bolder
+            width = 10.vmin
+            height = 10.vmin
+            fontSize = FontSize.xLarge
+            fontWeight = FontWeight.bold
             alignItems = AlignItems.center
             justifyContent = JustifyContent.center
-            borderRadius = 0.px
             backgroundColor = if (letter.isNotBlank()) NamedColor.lightgray else NamedColor.darkgray
           }
           elevation = 1
