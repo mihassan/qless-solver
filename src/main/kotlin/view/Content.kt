@@ -2,20 +2,23 @@ package view
 
 import controller.DictionaryLoader
 import controller.Solver
-import csstype.AlignItems
+import csstype.AlignContent
+import csstype.Auto
 import csstype.Display
-import csstype.FlexDirection
 import csstype.JustifyContent
+import csstype.JustifyItems
+import csstype.array
 import csstype.px
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Dictionary
+import mui.material.Alert
+import mui.material.AlertColor
 import mui.material.Box
 import mui.system.sx
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.p
 import react.useEffect
 import react.useEffectOnce
 import react.useState
@@ -58,11 +61,12 @@ val Content = FC<ContentProps> { props ->
 
   Box {
     sx {
-      margin = 16.px
-      display = Display.flex
-      flexDirection = FlexDirection.column
-      alignItems = AlignItems.center
+      display = Display.grid
+      gap = 24.px
+      gridTemplateRows = array(Auto.auto, Auto.auto, Auto.auto)
+      alignContent = AlignContent.center
       justifyContent = JustifyContent.center
+      justifyItems = JustifyItems.center
     }
 
     InputForm {
@@ -78,14 +82,20 @@ val Content = FC<ContentProps> { props ->
     }
 
     when (props.appState) {
-      AppState.SOLVING -> p { +"Solving, please wait..." }
+      AppState.SOLVING -> Alert {
+        severity = AlertColor.info
+        +"Solving, please wait..."
+      }
       AppState.SHOWING_RESULT -> {
         if (gridLetters.isNotEmpty()) {
           Grid {
             this.letters = gridLetters
           }
         } else {
-          p { +"Sorry, could not find a solution." }
+          Alert {
+            severity = AlertColor.error
+            +"Sorry, could not find a solution."
+          }
         }
       }
       else -> {}

@@ -6,7 +6,6 @@ import csstype.FontSize
 import csstype.FontWeight
 import csstype.JustifyContent
 import csstype.NamedColor
-import csstype.PlaceItems
 import csstype.fr
 import csstype.px
 import csstype.vmin
@@ -27,11 +26,9 @@ val Grid = FC<GridProps> { props ->
   Grid {
     sx {
       display = Display.inlineGrid
-      margin = 16.px
       gap = 8.px
       gridTemplateRows = csstype.repeat(rowCount, 1.fr)
       gridTemplateColumns = csstype.repeat(colCount, 1.fr)
-      placeItems = PlaceItems.center
     }
     props.letters.forEach { row ->
       row.forEach { letter ->

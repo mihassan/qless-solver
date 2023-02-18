@@ -31,7 +31,7 @@ val App = FC<Props> {
     Box {
       sx {
         display = Display.grid
-        gridTemplateRows = array(Auto.auto, 1.fr, Auto.auto,)
+        gridTemplateRows = array(Auto.auto, 1.fr, Auto.auto)
         height = 100.dvh
       }
 
