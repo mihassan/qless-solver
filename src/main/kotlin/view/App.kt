@@ -13,12 +13,12 @@ import react.FC
 import react.Props
 import react.useState
 
-enum class AppState {
-  PAGE_OPENED,
-  LOADING_DICTIONARY,
-  WAITING_FOR_INPUT,
-  SOLVING,
-  SHOWING_RESULT,
+enum class AppState(val displayText: String) {
+  PAGE_OPENED("page opened"),
+  LOADING_DICTIONARY("loading dictionary"),
+  WAITING_FOR_INPUT("waiting for input"),
+  SOLVING("solving..."),
+  SHOWING_RESULT("showing result"),
 }
 
 val App = FC<Props> {

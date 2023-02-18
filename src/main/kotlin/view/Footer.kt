@@ -25,7 +25,7 @@ val Footer = FC<FooterProps> { props ->
         padding = 16.px
         textAlign = TextAlign.end
       }
-      +"Current state: ${props.appState}"
+      +"Current state: ${props.appState.displayText}"
     }
   }
 }
