@@ -11,6 +11,7 @@ import web.html.HTMLDivElement
 import web.html.HTMLInputElement
 
 external interface InputFormProps : Props {
+  var onReset: () -> Unit
   var onSubmit: (String) -> Unit
 }
 
@@ -27,7 +28,11 @@ val InputForm = FC<InputFormProps> { props ->
       }
     }
     onChange = { event ->
-      inputLetters = event.validateInput()
+      val newInputLetters = event.validateInput()
+      if (inputLetters != newInputLetters) {
+        inputLetters = newInputLetters
+        props.onReset()
+      }
     }
   }
 }

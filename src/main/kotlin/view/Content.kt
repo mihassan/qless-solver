@@ -66,6 +66,11 @@ val Content = FC<ContentProps> { props ->
     }
 
     InputForm {
+      onReset = {
+        inputLetters = ""
+        gridLetters = emptyList()
+        props.onAppStateUpdate(AppState.WAITING_FOR_INPUT)
+      }
       onSubmit = {
         inputLetters = it
         props.onAppStateUpdate(AppState.SOLVING)
