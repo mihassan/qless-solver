@@ -94,7 +94,7 @@ val Content = FC<ContentProps> { props ->
         } else {
           Alert {
             severity = AlertColor.error
-            +"Sorry, could not find a solution."
+            +"Sorry, no solution found"
           }
         }
       }

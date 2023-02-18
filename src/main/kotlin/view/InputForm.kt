@@ -1,5 +1,7 @@
 package view
 
+import csstype.TextAlign
+import js.core.jso
 import mui.material.FormControlVariant
 import mui.material.TextField
 import react.FC
@@ -22,6 +24,13 @@ val InputForm = FC<InputFormProps> { props ->
     autoFocus = true
     variant = FormControlVariant.standard
     value = inputLetters
+    InputProps = jso {
+      inputProps = jso {
+        style = jso {
+          textAlign = TextAlign.center
+        }
+      }
+    }
     onKeyDown = { event ->
       if (event.key == "Enter") {
         props.onSubmit(inputLetters)

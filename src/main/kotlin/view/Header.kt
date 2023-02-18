@@ -1,5 +1,6 @@
 package view
 
+import csstype.AlignSelf
 import csstype.Position
 import mui.material.AppBar
 import mui.material.Toolbar
@@ -16,8 +17,11 @@ val Header = FC<Props> {
       position = Position.sticky
     }
     Toolbar {
+      sx {
+        alignSelf = AlignSelf.center
+      }
       Typography {
-        variant = TypographyVariant.h5
+        variant = TypographyVariant.h6
         noWrap = true
         component = ReactHTML.div
         +"Q-Less Solver"
