@@ -1,6 +1,9 @@
 package view
 
+import csstype.FontSize
+import csstype.FontWeight
 import csstype.TextAlign
+import csstype.px
 import js.core.jso
 import mui.material.FormControlVariant
 import mui.material.TextField
@@ -27,7 +30,10 @@ val InputForm = FC<InputFormProps> { props ->
     InputProps = jso {
       inputProps = jso {
         style = jso {
+          fontSize = FontSize.xLarge
+          fontWeight = FontWeight.bold
           textAlign = TextAlign.center
+          letterSpacing = 4.px
         }
       }
     }

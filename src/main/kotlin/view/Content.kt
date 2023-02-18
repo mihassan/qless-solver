@@ -47,7 +47,7 @@ val Content = FC<ContentProps> { props ->
       mainScope.launch {
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
-        delay(100)
+        delay(500)
         if (gridLetters.isEmpty()) {
           val result = Solver(dictionary).solve(inputLetters)
           if (result != null) {
