@@ -1,15 +1,13 @@
 package view
 
-import csstype.px
-import mui.material.Button
-import mui.material.ButtonVariant
-import mui.material.FormControl
-import mui.material.Input
-import mui.material.InputLabel
-import mui.system.sx
+import mui.material.FormControlVariant
+import mui.material.TextField
 import react.FC
 import react.Props
+import react.dom.events.FormEvent
+import react.dom.onChange
 import react.useState
+import web.html.HTMLDivElement
 import web.html.HTMLInputElement
 
 external interface InputFormProps : Props {
@@ -19,37 +17,24 @@ external interface InputFormProps : Props {
 val InputForm = FC<InputFormProps> { props ->
   var inputLetters by useState("")
 
-  FormControl {
-    InputLabel {
-      htmlFor = "inputLetters"
-      +"Type input letters: "
-    }
-    Input {
-      id = "inputLetters"
-      value = inputLetters
-      onKeyDown = { event ->
-        if (event.key.any { !it.isLetter() }) {
-          event.preventDefault()
-        }
-      }
-      onChange = { event ->
-        inputLetters =
-          (event.target as HTMLInputElement).value.filter { it.isLetter() }.uppercase().take(12)
-      }
-      onSubmit = {
+  TextField {
+    autoFocus = true
+    variant = FormControlVariant.standard
+    value = inputLetters
+    onKeyDown = { event ->
+      if (event.key == "Enter") {
         props.onSubmit(inputLetters)
       }
     }
-    Button {
-      sx {
-        marginTop = 16.px
-      }
-      variant = ButtonVariant.outlined
-      +"Solve"
-      onClick = { event ->
-        props.onSubmit(inputLetters)
-        event.preventDefault()
-      }
+    onChange = { event ->
+      inputLetters = event.validateInput()
     }
   }
 }
+
+private fun FormEvent<HTMLDivElement>.validateInput() =
+  (this.target as HTMLInputElement)
+    .value
+    .filter(Char::isLetter)
+    .uppercase()
+    .take(12)

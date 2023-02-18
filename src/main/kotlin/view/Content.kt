@@ -12,8 +12,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Dictionary
 import mui.material.Box
-import mui.material.Button
-import mui.material.ButtonVariant
 import mui.system.sx
 import react.FC
 import react.Props
@@ -60,20 +58,21 @@ val Content = FC<ContentProps> { props ->
 
   Box {
     sx {
+      margin = 16.px
       display = Display.flex
       flexDirection = FlexDirection.column
       alignItems = AlignItems.center
       justifyContent = JustifyContent.center
     }
-    when (props.appState) {
-      AppState.WAITING_FOR_INPUT -> {
-        InputForm {
-          onSubmit = {
-            inputLetters = it
-            props.onAppStateUpdate(AppState.SOLVING)
-          }
-        }
+
+    InputForm {
+      onSubmit = {
+        inputLetters = it
+        props.onAppStateUpdate(AppState.SOLVING)
       }
+    }
+
+    when (props.appState) {
       AppState.SOLVING -> p { +"Solving, please wait..." }
       AppState.SHOWING_RESULT -> {
         if (gridLetters.isNotEmpty()) {
@@ -82,20 +81,6 @@ val Content = FC<ContentProps> { props ->
           }
         } else {
           p { +"Sorry, could not find a solution." }
-        }
-        p {
-          Button {
-            sx {
-              marginTop = 16.px
-            }
-            +"Reset"
-            variant = ButtonVariant.outlined
-            onClick = {
-              inputLetters = ""
-              gridLetters = emptyList()
-              props.onAppStateUpdate(AppState.WAITING_FOR_INPUT)
-            }
-          }
         }
       }
       else -> {}
