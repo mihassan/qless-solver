@@ -55,6 +55,6 @@ val InputForm = FC<InputFormProps> { props ->
 private fun FormEvent<HTMLDivElement>.validateInput() =
   (this.target as HTMLInputElement)
     .value
-    .filter(Char::isLetter)
+    .filter { it in 'a'..'z' || it in 'A'..'Z' }
     .uppercase()
     .take(12)
