@@ -70,6 +70,7 @@ val Content = FC<ContentProps> { props ->
     }
 
     InputForm {
+      appState = props.appState
       onReset = {
         inputLetters = ""
         gridLetters = emptyList()

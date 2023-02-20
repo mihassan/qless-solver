@@ -16,6 +16,7 @@ import web.html.HTMLDivElement
 import web.html.HTMLInputElement
 
 external interface InputFormProps : Props {
+  var appState: AppState
   var onReset: () -> Unit
   var onSubmit: (String) -> Unit
 }
@@ -25,6 +26,7 @@ val InputForm = FC<InputFormProps> { props ->
 
   TextField {
     autoFocus = true
+    disabled = props.appState == AppState.SOLVING
     variant = FormControlVariant.standard
     value = inputLetters
     InputProps = jso {
