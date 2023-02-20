@@ -21,6 +21,11 @@ data class Dictionary private constructor(
 
   operator fun contains(word: String): Boolean = word in words
 
+  fun sort(): Dictionary {
+    val sortedEntries = entries.sortedByDescending { it.letters.length }
+    return Dictionary(sortedEntries.map { it.letters }.toSet(), sortedEntries.toSet())
+  }
+
   fun prune(bagOfLetters: Bag<Char>): Dictionary {
     val prunedEntries =
       entries.filter { it.canConstructFrom(bagOfLetters) && it.letters.length >= 3 }

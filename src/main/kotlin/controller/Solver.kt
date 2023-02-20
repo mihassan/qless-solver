@@ -7,7 +7,7 @@ import util.frequency
 class Solver(private val dictionary: Dictionary) {
   fun solve(inputLetters: String): Board? {
     val bagOfInputLetters = inputLetters.filter(Char::isLetter).map(Char::uppercaseChar).frequency()
-    val dictionary = dictionary.prune(bagOfInputLetters)
+    val dictionary = dictionary.prune(bagOfInputLetters).sort()
     val board = Board()
     // Only used for debugging purpose.
     val words = mutableListOf<String>()
