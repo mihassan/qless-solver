@@ -1,5 +1,6 @@
 package view
 
+import csstype.AlignItems
 import csstype.Auto
 import csstype.Display
 import csstype.array
@@ -32,6 +33,7 @@ val App = FC<Props> {
       sx {
         display = Display.grid
         gridTemplateRows = array(Auto.auto, 1.fr, Auto.auto)
+        alignItems = AlignItems.center
         height = 100.dvh
       }
 
