@@ -35,6 +35,8 @@ val App = FC<Props> {
         height = 100.dvh
       }
 
+      gap = 2
+
       Header()
 
       Content {

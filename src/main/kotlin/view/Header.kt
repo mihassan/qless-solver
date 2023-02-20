@@ -3,10 +3,10 @@ package view
 import csstype.AlignSelf
 import csstype.Color
 import csstype.Position
+import csstype.rem
 import mui.icons.material.OpenInNew
 import mui.material.AppBar
 import mui.material.Link
-import mui.material.SvgIconSize
 import mui.material.Toolbar
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
@@ -26,18 +26,19 @@ val Header = FC<Props> {
         alignSelf = AlignSelf.center
       }
       Typography {
+        component = ReactHTML.h1
         variant = TypographyVariant.h6
         noWrap = true
-        component = ReactHTML.div
         +"Q-Less Solver"
       }
       Link {
         href = "https://q-lessgame.com/"
         target = WindowTarget._blank
         OpenInNew {
-          fontSize = SvgIconSize.small
           sx {
             color = Color("primary.contrastText")
+            fontSize = 1.5.rem
+            alignSelf = AlignSelf.normal
           }
         }
       }

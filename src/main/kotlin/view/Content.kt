@@ -2,20 +2,16 @@ package view
 
 import controller.DictionaryLoader
 import controller.Solver
-import csstype.AlignContent
-import csstype.Auto
-import csstype.Display
-import csstype.JustifyContent
-import csstype.JustifyItems
-import csstype.array
-import csstype.px
+import csstype.AlignItems
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Dictionary
 import mui.material.Alert
 import mui.material.AlertColor
-import mui.material.Box
+import mui.material.Container
+import mui.material.Stack
+import mui.system.responsive
 import mui.system.sx
 import react.FC
 import react.Props
@@ -59,47 +55,48 @@ val Content = FC<ContentProps> { props ->
     }
   }
 
-  Box {
-    sx {
-      display = Display.grid
-      gap = 24.px
-      gridTemplateRows = array(Auto.auto, Auto.auto, Auto.auto)
-      alignContent = AlignContent.center
-      justifyContent = JustifyContent.center
-      justifyItems = JustifyItems.center
-    }
+  Container {
+    maxWidth = "sm"
 
-    InputForm {
-      appState = props.appState
-      onReset = {
-        inputLetters = ""
-        gridLetters = emptyList()
-        props.onAppStateUpdate(AppState.WAITING_FOR_INPUT)
+    Stack {
+      sx {
+        alignItems = AlignItems.center
       }
-      onSubmit = {
-        inputLetters = it
-        props.onAppStateUpdate(AppState.SOLVING)
-      }
-    }
 
-    when (props.appState) {
-      AppState.SOLVING -> Alert {
-        severity = AlertColor.info
-        +"Solving, please wait..."
-      }
-      AppState.SHOWING_RESULT -> {
-        if (gridLetters.isNotEmpty()) {
-          Grid {
-            this.letters = gridLetters
-          }
-        } else {
-          Alert {
-            severity = AlertColor.error
-            +"Sorry, no solution found"
-          }
+      spacing = responsive(4)
+
+      InputForm {
+        appState = props.appState
+        onReset = {
+          inputLetters = ""
+          gridLetters = emptyList()
+          props.onAppStateUpdate(AppState.WAITING_FOR_INPUT)
+        }
+        onSubmit = {
+          inputLetters = it
+          props.onAppStateUpdate(AppState.SOLVING)
         }
       }
-      else -> {}
+
+      when (props.appState) {
+        AppState.SOLVING -> Alert {
+          severity = AlertColor.info
+          +"Solving, please wait..."
+        }
+        AppState.SHOWING_RESULT -> {
+          if (gridLetters.isNotEmpty()) {
+            Grid {
+              letters = gridLetters
+            }
+          } else {
+            Alert {
+              severity = AlertColor.error
+              +"Sorry, no solution found"
+            }
+          }
+        }
+        else -> {}
+      }
     }
   }
 }
