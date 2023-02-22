@@ -7,8 +7,6 @@ import csstype.array
 import csstype.dvh
 import csstype.fr
 import mui.material.Box
-import mui.material.CssBaseline
-import mui.material.styles.ThemeProvider
 import mui.system.sx
 import react.FC
 import react.Props
@@ -24,11 +22,7 @@ enum class AppState(val displayText: String) {
 
 val App = FC<Props> {
   var state by useState { AppState.PAGE_OPENED }
-  ThemeProvider {
-    theme = Themes.Light
-
-    CssBaseline()
-
+  ThemeModule {
     Box {
       sx {
         display = Display.grid

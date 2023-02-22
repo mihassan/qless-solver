@@ -21,9 +21,6 @@ object Themes {
       typography = jso {
         fontSize = 20
       }
-      shape = jso {
-        borderRadius = 8.px
-      }
     }
   )
 
@@ -40,9 +37,6 @@ object Themes {
       }
       typography = jso {
         fontSize = 20
-      }
-      shape = jso {
-        borderRadius = 8.px
       }
     }
   )

@@ -1,11 +1,11 @@
 package view
 
 import csstype.AlignItems
+import csstype.Color
 import csstype.Display
 import csstype.FontSize
 import csstype.FontWeight
 import csstype.JustifyContent
-import csstype.NamedColor
 import csstype.fr
 import csstype.px
 import csstype.vmin
@@ -42,22 +42,31 @@ val Grid = FC<GridProps> { props ->
             width = 8.vmin
             height = 8.vmin
             fontSize = FontSize.xLarge
-            fontWeight = FontWeight.bold
+            fontWeight =
+              when {
+                isHighlighted -> FontWeight.bolder
+                else -> FontWeight.normal
+              }
             alignItems = AlignItems.center
             justifyContent = JustifyContent.center
+            // color =
+            //   when {
+            //     isHighlighted -> Color("text.secondary")
+            //     else -> Color("text.primary")
+            //   }
             backgroundColor =
               when {
-                letter.isBlank() -> NamedColor.lightgray
-                isHighlighted -> NamedColor.lightcyan
-                else -> NamedColor.white
+                letter.isBlank() -> Color("action.disabledBackground")
+                else -> Color("background.default")
               }
           }
           elevation =
             when {
-              letter.isBlank() -> 0
+              letter.isBlank() -> 1
               isHighlighted -> 12
-              else -> 3
+              else -> 6
             }
+          square = true
           +letter
           onMouseEnter = {
             highlightedCells = buildSet {
