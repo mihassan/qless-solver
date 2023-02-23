@@ -5,10 +5,12 @@ plugins {
 fun kotlinw(target: String): String =
     "org.jetbrains.kotlin-wrappers:kotlin-$target"
 
+val kotlinWrappersVersion = "1.0.0-pre.502"
+
 dependencies {
     testImplementation(kotlin("test"))
 
-    implementation(enforcedPlatform(kotlinw("wrappers-bom:1.0.0-pre.494")))
+    implementation(enforcedPlatform(kotlinw("wrappers-bom:$kotlinWrappersVersion")))
 
     implementation(kotlinw("react"))
     implementation(kotlinw("react-dom"))
