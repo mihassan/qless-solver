@@ -2,9 +2,14 @@ package view
 
 import csstype.Position
 import csstype.number
+import kotlinx.browser.window
 import mui.icons.material.Brightness4
 import mui.icons.material.Brightness7
+import mui.icons.material.GitHub
 import mui.material.AppBar
+import mui.material.IconButton
+import mui.material.IconButtonColor
+import mui.material.Size
 import mui.material.Switch
 import mui.material.Toolbar
 import mui.material.Tooltip
@@ -47,6 +52,18 @@ val Header = FC<Props> {
           onChange = { _, checked ->
             theme = if (checked) Themes.Dark else Themes.Light
           }
+        }
+      }
+
+      Tooltip {
+        title = ReactNode("View Sources")
+        IconButton {
+          size = Size.large
+          color = IconButtonColor.inherit
+          onClick = {
+            window.location.href = "https://github.com/mihassan/qless-solver/"
+          }
+          GitHub()
         }
       }
     }
