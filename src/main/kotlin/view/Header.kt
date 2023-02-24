@@ -6,6 +6,7 @@ import kotlinx.browser.window
 import mui.icons.material.Brightness4
 import mui.icons.material.Brightness7
 import mui.icons.material.GitHub
+import mui.icons.material.QuestionMark
 import mui.material.AppBar
 import mui.material.IconButton
 import mui.material.IconButtonColor
@@ -22,9 +23,11 @@ import react.ReactNode
 import react.create
 import react.dom.html.ReactHTML
 import react.useContext
+import react.useState
 
 val Header = FC<Props> {
   var theme by useContext(ThemeContext)
+  var showHelpDialog by useState { false }
 
   AppBar {
     sx {
@@ -66,6 +69,21 @@ val Header = FC<Props> {
           GitHub()
         }
       }
+
+      Tooltip {
+        title = ReactNode("How to Use")
+        IconButton {
+          onClick = { showHelpDialog = true }
+          size = Size.large
+          color = IconButtonColor.inherit
+          QuestionMark()
+        }
+      }
     }
+  }
+
+  HelpDialog {
+    open = showHelpDialog
+    onClose = { showHelpDialog = false }
   }
 }
