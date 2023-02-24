@@ -35,7 +35,9 @@ val Grid = FC<GridProps> { props ->
     }
     props.letters.forEachIndexed { y, row ->
       row.forEachIndexed { x, letter ->
-        val isHighlighted = Point(x, y) in highlightedCells
+        val currentCell = Point(x, y)
+        val isHighlighted = currentCell in highlightedCells
+
         Paper {
           sx {
             display = Display.flex
@@ -49,11 +51,6 @@ val Grid = FC<GridProps> { props ->
               }
             alignItems = AlignItems.center
             justifyContent = JustifyContent.center
-            // color =
-            //   when {
-            //     isHighlighted -> Color("text.secondary")
-            //     else -> Color("text.primary")
-            //   }
             backgroundColor =
               when {
                 letter.isBlank() -> Color("action.disabledBackground")
@@ -69,20 +66,7 @@ val Grid = FC<GridProps> { props ->
           square = true
           +letter
           onMouseEnter = {
-            highlightedCells = buildSet {
-              (y downTo 0)
-                .takeWhile { props.letters[it][x].isNotBlank() }
-                .forEach { add(Point(x, it)) }
-              (y until rowCount)
-                .takeWhile { props.letters[it][x].isNotBlank() }
-                .forEach { add(Point(x, it)) }
-              (x downTo 0)
-                .takeWhile { props.letters[y][it].isNotBlank() }
-                .forEach { add(Point(it, y)) }
-              (x until colCount)
-                .takeWhile { props.letters[y][it].isNotBlank() }
-                .forEach { add(Point(it, y)) }
-            }
+            highlightedCells = currentCell.calcHighlightedCells(props.letters)
           }
         }
       }
@@ -90,5 +74,28 @@ val Grid = FC<GridProps> { props ->
     onMouseLeave = {
       highlightedCells = emptySet()
     }
+  }
+}
+
+private fun Point.calcHighlightedCells(letters: List<List<String>>): Set<Point> {
+  val rowCount = letters.size
+  val colCount = letters.firstOrNull()?.size ?: 0
+
+  return buildSet {
+    (y downTo 0)
+      .takeWhile { letters[it][x].isNotBlank() }
+      .forEach { add(Point(x, it)) }
+
+    (y until rowCount)
+      .takeWhile { letters[it][x].isNotBlank() }
+      .forEach { add(Point(x, it)) }
+
+    (x downTo 0)
+      .takeWhile { letters[y][it].isNotBlank() }
+      .forEach { add(Point(it, y)) }
+
+    (x until colCount)
+      .takeWhile { letters[y][it].isNotBlank() }
+      .forEach { add(Point(it, y)) }
   }
 }
