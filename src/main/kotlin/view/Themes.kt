@@ -1,6 +1,5 @@
 package view
 
-import csstype.*
 import js.core.jso
 import mui.material.PaletteMode.dark
 import mui.material.PaletteMode.light
@@ -11,15 +10,6 @@ object Themes {
     jso {
       palette = jso {
         mode = light
-        primary = jso {
-          main = Color("#1a237e")
-        }
-        secondary = jso {
-          main = Color("#f50057")
-        }
-      }
-      typography = jso {
-        fontSize = 20
       }
     }
   )
@@ -28,15 +18,6 @@ object Themes {
     jso {
       palette = jso {
         mode = dark
-        primary = jso {
-          main = Color("#1a237e")
-        }
-        secondary = jso {
-          main = Color("#f50057")
-        }
-      }
-      typography = jso {
-        fontSize = 20
       }
     }
   )
