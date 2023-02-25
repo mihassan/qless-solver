@@ -1,19 +1,18 @@
 package view
 
 import csstype.Position
-import csstype.number
 import csstype.integer
+import csstype.number
 import kotlinx.browser.window
-import mui.icons.material.Brightness4
-import mui.icons.material.Brightness7
+import mui.icons.material.DarkMode
 import mui.icons.material.GitHub
+import mui.icons.material.LightMode
 import mui.icons.material.Menu
 import mui.icons.material.QuestionMark
 import mui.material.AppBar
 import mui.material.IconButton
 import mui.material.IconButtonColor
 import mui.material.Size
-import mui.material.Switch
 import mui.material.Toolbar
 import mui.material.Tooltip
 import mui.material.Typography
@@ -22,7 +21,6 @@ import mui.system.sx
 import react.FC
 import react.Props
 import react.ReactNode
-import react.create
 import react.dom.html.ReactHTML
 import react.useContext
 import react.useState
@@ -60,14 +58,13 @@ val Header = FC<Props> {
 
       Tooltip {
         title = ReactNode("Theme")
-        Switch {
-          icon = Brightness7.create()
-          checkedIcon = Brightness4.create()
-          checked = theme == Themes.Dark
-
-          onChange = { _, checked ->
-            theme = if (checked) Themes.Dark else Themes.Light
+        IconButton {
+          size = Size.large
+          color = IconButtonColor.inherit
+          onClick = {
+            theme = if (theme == Themes.Light) Themes.Dark else Themes.Light
           }
+          if (theme == Themes.Light) DarkMode() else LightMode()
         }
       }
 
