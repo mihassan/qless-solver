@@ -8,20 +8,18 @@ import mui.material.DialogContentText
 import mui.material.DialogTitle
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.br
 import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.p
-import react.dom.html.ReactHTML.style
 import react.dom.html.ReactHTML.ul
 
 external interface HelpDialogProps : Props {
-  var open: Boolean
+  var isOpen: Boolean
   var onClose: () -> Unit
 }
 
 val HelpDialog = FC<HelpDialogProps> { props ->
   Dialog {
-    open = props.open
+    open = props.isOpen
     onClose = { _, _ -> props.onClose() }
     DialogTitle {
       +"How to Use"

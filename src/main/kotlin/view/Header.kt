@@ -2,10 +2,12 @@ package view
 
 import csstype.Position
 import csstype.number
+import csstype.integer
 import kotlinx.browser.window
 import mui.icons.material.Brightness4
 import mui.icons.material.Brightness7
 import mui.icons.material.GitHub
+import mui.icons.material.Menu
 import mui.icons.material.QuestionMark
 import mui.material.AppBar
 import mui.material.IconButton
@@ -28,13 +30,24 @@ import react.useState
 val Header = FC<Props> {
   var theme by useContext(ThemeContext)
   var showHelpDialog by useState { false }
+  var showDrawer by useState { false }
 
   AppBar {
     sx {
       position = Position.sticky
+      zIndex = integer(1_500)
     }
 
     Toolbar {
+      IconButton {
+        size = Size.large
+        color = IconButtonColor.inherit
+        onClick = {
+          showDrawer = !showDrawer
+        }
+        Menu()
+      }
+
       Typography {
         sx {
           flexGrow = number(1.0)
@@ -83,7 +96,12 @@ val Header = FC<Props> {
   }
 
   HelpDialog {
-    open = showHelpDialog
+    isOpen = showHelpDialog
     onClose = { showHelpDialog = false }
+  }
+
+  Drawer {
+    isOpen = showDrawer
+    onClose = { showDrawer = false }
   }
 }
