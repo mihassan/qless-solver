@@ -1,5 +1,6 @@
 package view
 
+import controller.DictionarySize
 import csstype.Position
 import csstype.integer
 import csstype.number
@@ -25,7 +26,12 @@ import react.dom.html.ReactHTML
 import react.useContext
 import react.useState
 
-val Header = FC<Props> {
+external interface HeaderProps : Props {
+  var dictionarySize: DictionarySize
+  var onDictionarySizeUpdate: (DictionarySize) -> Unit
+}
+
+val Header = FC<HeaderProps> { props ->
   var theme by useContext(ThemeContext)
   var showHelpDialog by useState { false }
   var showDrawer by useState { false }
@@ -100,5 +106,7 @@ val Header = FC<Props> {
   Drawer {
     isOpen = showDrawer
     onClose = { showDrawer = false }
+    dictionarySize = props.dictionarySize
+    onDictionarySizeUpdate = { props.onDictionarySizeUpdate(it) }
   }
 }

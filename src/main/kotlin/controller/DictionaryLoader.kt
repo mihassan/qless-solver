@@ -4,11 +4,17 @@ import kotlinx.coroutines.await
 import kotlinx.browser.window
 import model.Dictionary
 
+enum class DictionarySize {
+  Small, Medium, Large
+}
+
 object DictionaryLoader {
-  private const val DICTIONARY_PATH = "dictionary/words.txt"
-  
-  suspend fun loadDictionary(): Dictionary {
-    val content =  window.fetch(DICTIONARY_PATH).await().text().await()
+  suspend fun loadDictionary(size: DictionarySize): Dictionary {
+    val content =  window.fetch(getDictionaryPath(size)).await().text().await()
     return Dictionary.of(content)
+  }
+
+  private fun getDictionaryPath(size: DictionarySize): String {
+    return "dictionary/${size}.txt"
   }
 }

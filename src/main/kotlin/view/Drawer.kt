@@ -1,5 +1,6 @@
 package view
 
+import controller.DictionarySize
 import csstype.rem
 import mui.material.DrawerAnchor.left
 import mui.material.FormControl
@@ -15,15 +16,15 @@ import mui.system.Box
 import mui.system.sx
 import react.FC
 import react.Props
-import react.useState
 
 external interface DrawerProps : Props {
   var isOpen: Boolean
   var onClose: () -> Unit
+  var dictionarySize: DictionarySize
+  var onDictionarySizeUpdate: (DictionarySize) -> Unit
 }
 
 val Drawer = FC<DrawerProps> { props ->
-  var dictionarySize by useState("small")
   SwipeableDrawer {
     anchor = left
     open = props.isOpen
@@ -42,21 +43,16 @@ val Drawer = FC<DrawerProps> { props ->
               +"Dictionary Size"
             }
             Select {
-              value = dictionarySize
+              value = props.dictionarySize
               onChange = { event, _ ->
-                dictionarySize = event.target.value
+                val dictionarySize = DictionarySize.valueOf(event.target.value)
+                props.onDictionarySizeUpdate(dictionarySize)
               }
-              MenuItem {
-                value = "small"
-                +"Small"
-              }
-              MenuItem {
-                value = "medium"
-                +"Medium"
-              }
-              MenuItem {
-                value = "large"
-                +"Large"
+              DictionarySize.values().map { size ->
+                MenuItem {
+                  value = "$size"
+                  +"$size"
+                }
               }
             }
           }

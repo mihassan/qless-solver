@@ -1,6 +1,5 @@
 package view
 
-import controller.DictionaryLoader
 import controller.Solver
 import csstype.AlignItems
 import kotlinx.coroutines.MainScope
@@ -16,27 +15,18 @@ import mui.system.sx
 import react.FC
 import react.Props
 import react.useEffect
-import react.useEffectOnce
 import react.useState
 
 external interface ContentProps : Props {
   var appState: AppState
   var onAppStateUpdate: (AppState) -> Unit
+  var dictionary: Dictionary
 }
 
 val Content = FC<ContentProps> { props ->
   val mainScope = MainScope()
-  var dictionary by useState { Dictionary.of("") }
   var inputLetters by useState { "" }
   var gridLetters: List<List<String>> by useState { emptyList() }
-
-  useEffectOnce {
-    props.onAppStateUpdate(AppState.LOADING_DICTIONARY)
-    mainScope.launch {
-      dictionary = DictionaryLoader.loadDictionary()
-      props.onAppStateUpdate(AppState.WAITING_FOR_INPUT)
-    }
-  }
 
   useEffect {
     if (props.appState == AppState.SOLVING) {
@@ -45,7 +35,7 @@ val Content = FC<ContentProps> { props ->
         // before we start time-consuming solve starts.
         delay(500)
         if (gridLetters.isEmpty()) {
-          val result = Solver(dictionary).solve(inputLetters)
+          val result = Solver(props.dictionary).solve(inputLetters)
           if (result != null) {
             gridLetters = result.lines().map { it.map { "$it" } }
           }
