@@ -5,7 +5,7 @@ import kotlinx.browser.window
 import model.Dictionary
 
 enum class DictionarySize {
-  Small, Medium, Large, Huge
+  Small, Medium, Large, Huge, Enormous
 }
 
 object DictionaryLoader {
