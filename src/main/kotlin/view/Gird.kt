@@ -6,6 +6,7 @@ import csstype.Display
 import csstype.FontSize
 import csstype.FontWeight
 import csstype.JustifyContent
+import csstype.UserSelect
 import csstype.fr
 import csstype.px
 import csstype.vmin
@@ -43,7 +44,11 @@ val Grid = FC<GridProps> { props ->
             display = Display.flex
             width = 8.vmin
             height = 8.vmin
-            fontSize = FontSize.xLarge
+            fontSize =
+              when {
+                isHighlighted -> FontSize.xLarge
+                else -> FontSize.large
+              }
             fontWeight =
               when {
                 isHighlighted -> FontWeight.bolder
@@ -56,6 +61,7 @@ val Grid = FC<GridProps> { props ->
                 letter.isBlank() -> Color("action.disabledBackground")
                 else -> Color("background.default")
               }
+            userSelect = "none".unsafeCast<UserSelect>()
           }
           elevation =
             when {
@@ -64,10 +70,10 @@ val Grid = FC<GridProps> { props ->
               else -> 6
             }
           square = true
-          +letter
           onMouseEnter = {
             highlightedCells = currentCell.calcHighlightedCells(props.letters)
           }
+          +letter
         }
       }
     }

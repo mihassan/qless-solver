@@ -57,7 +57,7 @@ val Header = FC<HeaderProps> { props ->
           flexGrow = number(1.0)
         }
         component = ReactHTML.h1
-        variant = TypographyVariant.h4
+        variant = TypographyVariant.h6
         noWrap = true
         +"Q-Less Solver"
       }
@@ -65,7 +65,6 @@ val Header = FC<HeaderProps> { props ->
       Tooltip {
         title = ReactNode("Theme")
         IconButton {
-          size = Size.large
           color = IconButtonColor.inherit
           onClick = {
             theme = if (theme == Themes.Light) Themes.Dark else Themes.Light
@@ -77,7 +76,6 @@ val Header = FC<HeaderProps> { props ->
       Tooltip {
         title = ReactNode("View Sources")
         IconButton {
-          size = Size.large
           color = IconButtonColor.inherit
           onClick = {
             window.location.href = "https://github.com/mihassan/qless-solver/"
@@ -89,9 +87,8 @@ val Header = FC<HeaderProps> { props ->
       Tooltip {
         title = ReactNode("How to Use")
         IconButton {
-          onClick = { showHelpDialog = true }
-          size = Size.large
           color = IconButtonColor.inherit
+          onClick = { showHelpDialog = true }
           QuestionMark()
         }
       }
