@@ -43,6 +43,6 @@ data class Dictionary private constructor(
     }
 
     fun of(dictionary: String): Dictionary =
-      of(dictionary.lines().filterNot { SPACE in it }.flatMap { it.words() })
+      of(dictionary.lines().filterNot { SPACE in it })
   }
 }
