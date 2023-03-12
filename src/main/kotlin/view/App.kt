@@ -8,6 +8,7 @@ import csstype.Display
 import csstype.array
 import csstype.dvh
 import csstype.fr
+import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import model.Dictionary
@@ -16,6 +17,7 @@ import mui.system.sx
 import react.FC
 import react.Props
 import react.useEffect
+import react.useEffectOnce
 import react.useState
 
 enum class AppState(val displayText: String) {
@@ -34,10 +36,17 @@ val App = FC<Props> {
   var showDrawer by useState { false }
   var showHelpDialog by useState { false }
 
+  useEffectOnce {
+    window.localStorage.getItem("dictionarySize")?.let {
+      dictionarySize = DictionarySize.valueOf(it)
+    }
+  }
+
   useEffect(dictionarySize) {
     state = AppState.LOADING_DICTIONARY
     mainScope.launch {
       dictionary = DictionaryLoader.loadDictionary(dictionarySize)
+      window.localStorage.setItem("dictionarySize", dictionarySize.name)
       state = AppState.WAITING_FOR_INPUT
     }
   }
