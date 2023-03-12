@@ -8,13 +8,16 @@ enum class DictionarySize {
   Small, Medium, Large, Huge, Enormous
 }
 
-object DictionaryLoader {
-  suspend fun loadDictionary(size: DictionarySize): Dictionary {
-    val content =  window.fetch(getDictionaryPath(size)).await().text().await()
-    return Dictionary.of(content)
-  }
+enum class DictionaryType {
+  General, QLess
+}
 
-  private fun getDictionaryPath(size: DictionarySize): String {
-    return "dictionary/${size}.txt"
+class DictionaryLoader(size: DictionarySize, type: DictionaryType) {
+  private val dictionaryPath: String =
+    "https://raw.githubusercontent.com/mihassan/qless-solver/main/dictionary/$type/$size.txt"
+
+  suspend fun load(): Dictionary {
+    val content = window.fetch(dictionaryPath).await().text().await()
+    return Dictionary.of(content)
   }
 }

@@ -2,6 +2,7 @@ package view
 
 import controller.DictionaryLoader
 import controller.DictionarySize
+import controller.DictionaryType
 import csstype.AlignItems
 import csstype.Auto
 import csstype.Display
@@ -32,6 +33,7 @@ val App = FC<Props> {
   val mainScope = MainScope()
   var state by useState { AppState.PAGE_OPENED }
   var dictionarySize by useState { DictionarySize.Small }
+  var dictionaryLoader by useState { DictionaryLoader(DictionarySize.Small, DictionaryType.QLess) }
   var dictionary by useState { Dictionary.of("") }
   var showDrawer by useState { false }
   var showHelpDialog by useState { false }
@@ -44,8 +46,9 @@ val App = FC<Props> {
 
   useEffect(dictionarySize) {
     state = AppState.LOADING_DICTIONARY
+    dictionaryLoader = DictionaryLoader(dictionarySize, DictionaryType.QLess)
     mainScope.launch {
-      dictionary = DictionaryLoader.loadDictionary(dictionarySize)
+      dictionary = dictionaryLoader.load()
       window.localStorage.setItem("dictionarySize", dictionarySize.name)
       state = AppState.WAITING_FOR_INPUT
     }
