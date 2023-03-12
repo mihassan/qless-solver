@@ -4,10 +4,24 @@ import model.*
 import util.Bag
 import util.frequency
 
-class Solver(private val dictionary: Dictionary) {
+enum class Strategy(val display: String) {
+  AlphabeticOrder("Alphabetic order"),
+  ShortestFirst("Shortest first"),
+  LongestFirst("Longest first"),
+  RandomOrder("Random order")
+}
+
+class Solver(private val dictionary: Dictionary, private val strategy: Strategy) {
   fun solve(inputLetters: String): Board? {
     val bagOfInputLetters = inputLetters.filter(Char::isLetter).map(Char::uppercaseChar).frequency()
-    val dictionary = dictionary.prune(bagOfInputLetters).sort()
+    val dictionary = with(dictionary.prune(bagOfInputLetters)) {
+      when(strategy) {
+        Strategy.AlphabeticOrder -> sortAlphabeticOrder()
+        Strategy.ShortestFirst -> sortShortestFirst()
+        Strategy.LongestFirst -> sortLongestFirst()
+        Strategy.RandomOrder -> shuffle()
+      }
+    }
     val board = Board()
     // Only used for debugging purpose.
     val words = mutableListOf<String>()
@@ -59,6 +73,7 @@ class Solver(private val dictionary: Dictionary) {
 
     console.log("Dictionary size: ${dictionary.size}")
     console.log(dictionary.words.joinToString(", "))
+
     dictionary.findLeastFrequentLetter()?.let {
       console.log("Starting with letter: $it")
       board.place(it, Point(0, 0))

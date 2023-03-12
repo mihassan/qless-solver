@@ -1,6 +1,7 @@
 package view
 
 import controller.Solver
+import controller.Strategy
 import csstype.AlignItems
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -21,6 +22,7 @@ external interface ContentProps : Props {
   var appState: AppState
   var onAppStateUpdate: (AppState) -> Unit
   var dictionary: Dictionary
+  var strategy: Strategy
 }
 
 val Content = FC<ContentProps> { props ->
@@ -34,8 +36,8 @@ val Content = FC<ContentProps> { props ->
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
         delay(50)
-        if (gridLetters.isEmpty()) {
-          val result = Solver(props.dictionary).solve(inputLetters)
+        if (gridLetters.isEmpty() || props.strategy == Strategy.RandomOrder) {
+          val result = Solver(props.dictionary, props.strategy).solve(inputLetters)
           if (result != null) {
             gridLetters = result.lines().map { it.map { "$it" } }
           }
@@ -46,6 +48,10 @@ val Content = FC<ContentProps> { props ->
   }
 
   useEffect(props.dictionary) {
+    gridLetters = emptyList()
+  }
+
+  useEffect(props.strategy) {
     gridLetters = emptyList()
   }
 

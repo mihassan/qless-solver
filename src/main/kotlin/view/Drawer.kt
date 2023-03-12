@@ -2,6 +2,7 @@ package view
 
 import controller.DictionarySize
 import controller.DictionaryType
+import controller.Strategy
 import csstype.rem
 import mui.material.DrawerAnchor.left
 import mui.material.FormControl
@@ -25,6 +26,8 @@ external interface DrawerProps : Props {
   var onDictionaryTypeUpdate: (DictionaryType) -> Unit
   var dictionarySize: DictionarySize
   var onDictionarySizeUpdate: (DictionarySize) -> Unit
+  var strategy: Strategy
+  var onStrategyUpdate: (Strategy) -> Unit
 }
 
 val Drawer = FC<DrawerProps> { props ->
@@ -43,7 +46,7 @@ val Drawer = FC<DrawerProps> { props ->
               minWidth = 10.rem
             }
             InputLabel {
-              +"Dictionary Type"
+              +"Dictionary type"
             }
             Select {
               value = props.dictionaryType
@@ -67,7 +70,7 @@ val Drawer = FC<DrawerProps> { props ->
               minWidth = 10.rem
             }
             InputLabel {
-              +"Dictionary Size"
+              +"Dictionary size"
             }
             Select {
               value = props.dictionarySize
@@ -79,6 +82,30 @@ val Drawer = FC<DrawerProps> { props ->
                 MenuItem {
                   value = "$size"
                   +"$size"
+                }
+              }
+            }
+          }
+        }
+        ListItem {
+          FormControl {
+            variant = FormControlVariant.standard
+            sx {
+              minWidth = 10.rem
+            }
+            InputLabel {
+              +"Solving strategy"
+            }
+            Select {
+              value = props.strategy
+              onChange = { event, _ ->
+                val strategy = Strategy.valueOf(event.target.value)
+                props.onStrategyUpdate(strategy)
+              }
+              Strategy.values().map { strategy ->
+                MenuItem {
+                  value = "$strategy"
+                  +strategy.display
                 }
               }
             }

@@ -3,6 +3,7 @@ package view
 import controller.DictionaryLoader
 import controller.DictionarySize
 import controller.DictionaryType
+import controller.Strategy
 import csstype.AlignItems
 import csstype.Auto
 import csstype.Display
@@ -11,6 +12,7 @@ import csstype.dvh
 import csstype.fr
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Dictionary
 import mui.material.Box
@@ -35,6 +37,7 @@ val App = FC<Props> {
   var dictionaryType by useState { DictionaryType.QLess }
   var dictionarySize by useState { DictionarySize.Small }
   var dictionary by useState { Dictionary.of("") }
+  var strategy by useState { Strategy.LongestFirst }
   var showDrawer by useState { false }
   var showHelpDialog by useState { false }
 
@@ -44,6 +47,9 @@ val App = FC<Props> {
     }
     window.localStorage.getItem("dictionarySize")?.let {
       dictionarySize = DictionarySize.valueOf(it)
+    }
+    window.localStorage.getItem("strategy")?.let {
+      strategy = Strategy.valueOf(it)
     }
   }
 
@@ -56,6 +62,12 @@ val App = FC<Props> {
       showDrawer = false
       state = AppState.WAITING_FOR_INPUT
     }
+  }
+
+  useEffect(strategy) {
+    window.localStorage.setItem("strategy", strategy.name)
+    showDrawer = false
+    state = AppState.WAITING_FOR_INPUT
   }
 
   ThemeModule {
@@ -85,12 +97,15 @@ val App = FC<Props> {
         this.onDictionaryTypeUpdate = { dictionaryType = it }
         this.dictionarySize = dictionarySize
         this.onDictionarySizeUpdate = { dictionarySize = it }
+        this.strategy = strategy
+        this.onStrategyUpdate = { strategy = it }
       }
 
       Content {
         this.appState = state
         this.onAppStateUpdate = { state = it }
         this.dictionary = dictionary
+        this.strategy = strategy
       }
 
       Footer {

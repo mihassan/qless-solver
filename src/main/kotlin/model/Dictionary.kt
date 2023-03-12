@@ -2,7 +2,6 @@ package model
 
 import util.Bag
 import util.frequency
-import util.words
 
 @Suppress("DataClassPrivateConstructor")
 data class Dictionary private constructor(
@@ -21,10 +20,18 @@ data class Dictionary private constructor(
 
   operator fun contains(word: String): Boolean = word in words
 
-  fun sort(): Dictionary {
-    val sortedEntries = entries.sortedByDescending { it.letters.length }
-    return Dictionary(sortedEntries.map { it.letters }.toSet(), sortedEntries.toSet())
-  }
+  private fun updateEntries(fn: Set<Word>.() -> List<Word>): Dictionary =
+    with(fn(entries)) {
+      Dictionary(map { it.letters }.toSet(), toSet())
+    }
+
+  fun sortAlphabeticOrder(): Dictionary = updateEntries { sortedBy { it.letters } }
+
+  fun sortShortestFirst(): Dictionary = updateEntries { sortedBy { it.letters.length } }
+
+  fun sortLongestFirst(): Dictionary = updateEntries { sortedByDescending { it.letters.length } }
+
+  fun shuffle(): Dictionary = updateEntries { shuffled() }
 
   fun prune(bagOfLetters: Bag<Char>): Dictionary {
     val prunedEntries =
