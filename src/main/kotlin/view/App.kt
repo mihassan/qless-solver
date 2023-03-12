@@ -32,24 +32,28 @@ enum class AppState(val displayText: String) {
 val App = FC<Props> {
   val mainScope = MainScope()
   var state by useState { AppState.PAGE_OPENED }
+  var dictionaryType by useState { DictionaryType.QLess }
   var dictionarySize by useState { DictionarySize.Small }
-  var dictionaryLoader by useState { DictionaryLoader(DictionarySize.Small, DictionaryType.QLess) }
   var dictionary by useState { Dictionary.of("") }
   var showDrawer by useState { false }
   var showHelpDialog by useState { false }
 
   useEffectOnce {
+    window.localStorage.getItem("dictionaryType")?.let {
+      dictionaryType = DictionaryType.valueOf(it)
+    }
     window.localStorage.getItem("dictionarySize")?.let {
       dictionarySize = DictionarySize.valueOf(it)
     }
   }
 
-  useEffect(dictionarySize) {
+  useEffect(dictionaryType, dictionarySize) {
     state = AppState.LOADING_DICTIONARY
-    dictionaryLoader = DictionaryLoader(dictionarySize, DictionaryType.QLess)
     mainScope.launch {
-      dictionary = dictionaryLoader.load()
+      dictionary = DictionaryLoader(dictionaryType, dictionarySize).load()
+      window.localStorage.setItem("dictionaryType", dictionaryType.name)
       window.localStorage.setItem("dictionarySize", dictionarySize.name)
+      showDrawer = false
       state = AppState.WAITING_FOR_INPUT
     }
   }
@@ -77,6 +81,8 @@ val App = FC<Props> {
       Drawer {
         this.isOpen = showDrawer
         this.onClose = { showDrawer = false }
+        this.dictionaryType = dictionaryType
+        this.onDictionaryTypeUpdate = { dictionaryType = it }
         this.dictionarySize = dictionarySize
         this.onDictionarySizeUpdate = { dictionarySize = it }
       }

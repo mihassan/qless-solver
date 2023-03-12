@@ -1,6 +1,7 @@
 package view
 
 import controller.DictionarySize
+import controller.DictionaryType
 import csstype.rem
 import mui.material.DrawerAnchor.left
 import mui.material.FormControl
@@ -20,6 +21,8 @@ import react.Props
 external interface DrawerProps : Props {
   var isOpen: Boolean
   var onClose: () -> Unit
+  var dictionaryType: DictionaryType
+  var onDictionaryTypeUpdate: (DictionaryType) -> Unit
   var dictionarySize: DictionarySize
   var onDictionarySizeUpdate: (DictionarySize) -> Unit
 }
@@ -33,6 +36,30 @@ val Drawer = FC<DrawerProps> { props ->
     Box {
       Toolbar()
       List {
+        ListItem {
+          FormControl {
+            variant = FormControlVariant.standard
+            sx {
+              minWidth = 10.rem
+            }
+            InputLabel {
+              +"Dictionary Type"
+            }
+            Select {
+              value = props.dictionaryType
+              onChange = { event, _ ->
+                val dictionaryType = DictionaryType.valueOf(event.target.value)
+                props.onDictionaryTypeUpdate(dictionaryType)
+              }
+              DictionaryType.values().map { type ->
+                MenuItem {
+                  value = "$type"
+                  +"$type"
+                }
+              }
+            }
+          }
+        }
         ListItem {
           FormControl {
             variant = FormControlVariant.standard

@@ -4,15 +4,15 @@ import kotlinx.coroutines.await
 import kotlinx.browser.window
 import model.Dictionary
 
-enum class DictionarySize {
-  Small, Medium, Large, Huge, Enormous
-}
-
 enum class DictionaryType {
   General, QLess
 }
 
-class DictionaryLoader(size: DictionarySize, type: DictionaryType) {
+enum class DictionarySize {
+  Small, Medium, Large, Huge, Enormous
+}
+
+class DictionaryLoader(type: DictionaryType, size: DictionarySize) {
   private val dictionaryPath: String =
     "https://raw.githubusercontent.com/mihassan/qless-solver/main/dictionary/$type/$size.txt"
 
