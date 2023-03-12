@@ -31,6 +31,8 @@ val App = FC<Props> {
   var state by useState { AppState.PAGE_OPENED }
   var dictionarySize by useState { DictionarySize.Small }
   var dictionary by useState { Dictionary.of("") }
+  var showDrawer by useState { false }
+  var showHelpDialog by useState { false }
 
   useEffect(dictionarySize) {
     state = AppState.LOADING_DICTIONARY
@@ -52,6 +54,17 @@ val App = FC<Props> {
       gap = 2
 
       Header {
+        this.toggleDrawer = {
+          showDrawer = !showDrawer
+        }
+        this.toggleHelpDialog = {
+          showHelpDialog = !showHelpDialog
+        }
+      }
+
+      Drawer {
+        this.isOpen = showDrawer
+        this.onClose = { showDrawer = false }
         this.dictionarySize = dictionarySize
         this.onDictionarySizeUpdate = { dictionarySize = it }
       }
@@ -64,6 +77,11 @@ val App = FC<Props> {
 
       Footer {
         this.appState = state
+      }
+
+      HelpDialog {
+        isOpen = showHelpDialog
+        onClose = { showHelpDialog = false }
       }
     }
   }

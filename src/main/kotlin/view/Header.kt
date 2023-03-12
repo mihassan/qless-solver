@@ -1,6 +1,5 @@
 package view
 
-import controller.DictionarySize
 import csstype.Position
 import csstype.integer
 import csstype.number
@@ -24,17 +23,14 @@ import react.Props
 import react.ReactNode
 import react.dom.html.ReactHTML
 import react.useContext
-import react.useState
 
 external interface HeaderProps : Props {
-  var dictionarySize: DictionarySize
-  var onDictionarySizeUpdate: (DictionarySize) -> Unit
+  var toggleDrawer: () -> Unit
+  var toggleHelpDialog: () -> Unit
 }
 
 val Header = FC<HeaderProps> { props ->
   var theme by useContext(ThemeContext)
-  var showHelpDialog by useState { false }
-  var showDrawer by useState { false }
 
   AppBar {
     sx {
@@ -46,9 +42,7 @@ val Header = FC<HeaderProps> { props ->
       IconButton {
         size = Size.large
         color = IconButtonColor.inherit
-        onClick = {
-          showDrawer = !showDrawer
-        }
+        onClick = { props.toggleDrawer() }
         Menu()
       }
 
@@ -88,22 +82,10 @@ val Header = FC<HeaderProps> { props ->
         title = ReactNode("How to Use")
         IconButton {
           color = IconButtonColor.inherit
-          onClick = { showHelpDialog = true }
+          onClick = { props.toggleHelpDialog() }
           QuestionMark()
         }
       }
     }
-  }
-
-  HelpDialog {
-    isOpen = showHelpDialog
-    onClose = { showHelpDialog = false }
-  }
-
-  Drawer {
-    isOpen = showDrawer
-    onClose = { showDrawer = false }
-    dictionarySize = props.dictionarySize
-    onDictionarySizeUpdate = { props.onDictionarySizeUpdate(it) }
   }
 }
