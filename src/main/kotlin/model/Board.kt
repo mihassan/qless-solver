@@ -18,16 +18,18 @@ data class Point(val x: Int, val y: Int) {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-value class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
+data class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
   inline fun clone(): Board = Board(cells.toMutableMap())
+
+  inline fun isEmpty(): Boolean = cells.isEmpty()
 
   inline fun letters(): Bag<Char> = cells.values.toList().frequency()
 
   inline fun xRange(): IntRange =
-    if (cells.isEmpty()) (0..0) else cells.keys.map(Point::x).run { min()..max() }
+    if (isEmpty()) (0..0) else cells.keys.map(Point::x).run { min()..max() }
 
   inline fun yRange(): IntRange =
-    if (cells.isEmpty()) (0..0) else cells.keys.map(Point::y).run { min()..max() }
+    if (isEmpty()) (0..0) else cells.keys.map(Point::y).run { min()..max() }
 
   inline fun show(): String = yRange().joinToString("\n") { y ->
     xRange().map { x ->
@@ -36,6 +38,8 @@ value class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
   }
 
   inline fun lines(): List<String> = show().lines()
+
+  inline fun grid(): List<List<String>> = lines().map { it.map { "$it" } }
 
   inline fun columns(): List<String> = lines().transpose()
 

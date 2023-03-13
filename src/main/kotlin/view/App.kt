@@ -12,7 +12,6 @@ import csstype.dvh
 import csstype.fr
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.Dictionary
 import mui.material.Box

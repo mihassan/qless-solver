@@ -6,6 +6,7 @@ import csstype.AlignItems
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import model.Board
 import model.Dictionary
 import mui.material.Alert
 import mui.material.AlertColor
@@ -28,7 +29,7 @@ external interface ContentProps : Props {
 val Content = FC<ContentProps> { props ->
   val mainScope = MainScope()
   var inputLetters by useState { "" }
-  var gridLetters: List<List<String>> by useState { emptyList() }
+  var board by useState{ Board() }
 
   useEffect {
     if (props.appState == AppState.SOLVING) {
@@ -36,10 +37,11 @@ val Content = FC<ContentProps> { props ->
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
         delay(50)
-        if (gridLetters.isEmpty() || props.strategy == Strategy.RandomOrder) {
+        if (board.isEmpty() || props.strategy == Strategy.RandomOrder) {
           val result = Solver(props.dictionary, props.strategy).solve(inputLetters)
           if (result != null) {
-            gridLetters = result.lines().map { it.map { "$it" } }
+            board = result
+            console.log(board.isEmpty())
           }
         }
         props.onAppStateUpdate(AppState.SHOWING_RESULT)
@@ -48,11 +50,11 @@ val Content = FC<ContentProps> { props ->
   }
 
   useEffect(props.dictionary) {
-    gridLetters = emptyList()
+    board = Board()
   }
 
   useEffect(props.strategy) {
-    gridLetters = emptyList()
+    board = Board()
   }
 
   Container {
@@ -69,7 +71,7 @@ val Content = FC<ContentProps> { props ->
         appState = props.appState
         onReset = {
           inputLetters = ""
-          gridLetters = emptyList()
+          board = Board()
           props.onAppStateUpdate(AppState.WAITING_FOR_INPUT)
         }
         onSubmit = {
@@ -84,9 +86,9 @@ val Content = FC<ContentProps> { props ->
           +"Solving, please wait..."
         }
         AppState.SHOWING_RESULT -> {
-          if (gridLetters.isNotEmpty()) {
+          if (!board.isEmpty()) {
             Grid {
-              letters = gridLetters
+              letters = board.grid()
             }
           } else {
             Alert {
