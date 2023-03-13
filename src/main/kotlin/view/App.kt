@@ -37,8 +37,14 @@ val App = FC<Props> {
   var dictionarySize by useState { DictionarySize.Small }
   var dictionary by useState { Dictionary.of("") }
   var strategy by useState { Strategy.LongestFirst }
+  var solveHistory by useState { emptySet<String>() }
   var showDrawer by useState { false }
   var showHelpDialog by useState { false }
+
+  fun updateSolveHistory(inputLetters: String) {
+    check(inputLetters.isNotBlank())
+    solveHistory = solveHistory - inputLetters + inputLetters
+  }
 
   useEffectOnce {
     window.localStorage.getItem("dictionaryType")?.let {
@@ -49,6 +55,9 @@ val App = FC<Props> {
     }
     window.localStorage.getItem("strategy")?.let {
       strategy = Strategy.valueOf(it)
+    }
+    window.localStorage.getItem("solveHistory")?.let {
+      solveHistory = it.split(", ").filter { it.isNotBlank() }.take(10).toSet()
     }
   }
 
@@ -67,6 +76,10 @@ val App = FC<Props> {
     window.localStorage.setItem("strategy", strategy.name)
     showDrawer = false
     state = AppState.WAITING_FOR_INPUT
+  }
+
+  useEffect(solveHistory) {
+    window.localStorage.setItem("solveHistory", solveHistory.joinToString())
   }
 
   ThemeModule {
@@ -98,11 +111,14 @@ val App = FC<Props> {
         this.onDictionarySizeUpdate = { dictionarySize = it }
         this.strategy = strategy
         this.onStrategyUpdate = { strategy = it }
+        this.solveHistory = solveHistory
+        this.clearSolveHistory = { solveHistory = emptySet() }
       }
 
       Content {
         this.appState = state
         this.onAppStateUpdate = { state = it }
+        this.onSolve = { updateSolveHistory(it) }
         this.dictionary = dictionary
         this.strategy = strategy
       }

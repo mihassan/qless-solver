@@ -24,12 +24,13 @@ external interface ContentProps : Props {
   var onAppStateUpdate: (AppState) -> Unit
   var dictionary: Dictionary
   var strategy: Strategy
+  var onSolve: (String) -> Unit
 }
 
 val Content = FC<ContentProps> { props ->
   val mainScope = MainScope()
   var inputLetters by useState { "" }
-  var board by useState{ Board() }
+  var board by useState { Board() }
 
   useEffect {
     if (props.appState == AppState.SOLVING) {
@@ -41,7 +42,7 @@ val Content = FC<ContentProps> { props ->
           val result = Solver(props.dictionary, props.strategy).solve(inputLetters)
           if (result != null) {
             board = result
-            console.log(board.isEmpty())
+            props.onSolve(inputLetters)
           }
         }
         props.onAppStateUpdate(AppState.SHOWING_RESULT)

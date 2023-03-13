@@ -3,21 +3,29 @@ package view
 import controller.DictionarySize
 import controller.DictionaryType
 import controller.Strategy
+import csstype.Color
 import csstype.rem
+import kotlinx.browser.window
+import mui.material.Divider
 import mui.material.DrawerAnchor.left
 import mui.material.FormControl
 import mui.material.FormControlVariant
 import mui.material.InputLabel
 import mui.material.List
 import mui.material.ListItem
+import mui.material.ListItemButton
+import mui.material.ListItemText
+import mui.material.ListSubheader
 import mui.material.MenuItem
 import mui.material.Select
 import mui.material.SwipeableDrawer
 import mui.material.Toolbar
+import mui.material.Typography
 import mui.system.Box
 import mui.system.sx
 import react.FC
 import react.Props
+import react.create
 
 external interface DrawerProps : Props {
   var isOpen: Boolean
@@ -28,6 +36,8 @@ external interface DrawerProps : Props {
   var onDictionarySizeUpdate: (DictionarySize) -> Unit
   var strategy: Strategy
   var onStrategyUpdate: (Strategy) -> Unit
+  var solveHistory: Set<String>
+  var clearSolveHistory: () -> Unit
 }
 
 val Drawer = FC<DrawerProps> { props ->
@@ -107,6 +117,35 @@ val Drawer = FC<DrawerProps> { props ->
                   value = "$strategy"
                   +strategy.display
                 }
+              }
+            }
+          }
+        }
+      }
+      if (props.solveHistory.isNotEmpty()) {
+        Divider {}
+        List {
+          subheader = ListSubheader.create {
+            +"History"
+          }
+          props.solveHistory.reversed().forEach { inputLetters ->
+            ListItemButton {
+              onClick = {
+                window.alert(inputLetters)
+              }
+              ListItemText {
+                +inputLetters
+              }
+            }
+          }
+          ListItemButton {
+            onClick = { props.clearSolveHistory() }
+            ListItemText {
+              Typography {
+                sx {
+                  color = Color("error.main")
+                }
+                +"Clear History"
               }
             }
           }
