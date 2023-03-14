@@ -17,18 +17,17 @@ import web.html.HTMLInputElement
 
 external interface InputFormProps : Props {
   var appState: AppState
-  var onReset: () -> Unit
-  var onSubmit: (String) -> Unit
+  var inputLetters: String
+  var onInputUpdate: (String) -> Unit
+  var onSubmit: () -> Unit
 }
 
 val InputForm = FC<InputFormProps> { props ->
-  var inputLetters by useState("")
-
   TextField {
     autoFocus = true
     disabled = props.appState == AppState.SOLVING
     variant = FormControlVariant.standard
-    value = inputLetters
+    value = props.inputLetters
     InputProps = jso {
       inputProps = jso {
         style = jso {
@@ -41,14 +40,13 @@ val InputForm = FC<InputFormProps> { props ->
     }
     onKeyDown = { event ->
       if (event.key == "Enter") {
-        props.onSubmit(inputLetters)
+        props.onSubmit()
       }
     }
     onChange = { event ->
       val newInputLetters = event.validateInput()
-      if (inputLetters != newInputLetters) {
-        inputLetters = newInputLetters
-        props.onReset()
+      if (props.inputLetters != newInputLetters) {
+        props.onInputUpdate(newInputLetters)
       }
     }
   }

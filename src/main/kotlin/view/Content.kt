@@ -24,26 +24,27 @@ external interface ContentProps : Props {
   var onAppStateUpdate: (AppState) -> Unit
   var dictionary: Dictionary
   var strategy: Strategy
-  var onSolve: (String) -> Unit
+  var inputLetters: String
+  var onInputUpdate: (String) -> Unit
+  var onSolve: () -> Unit
 }
 
 val Content = FC<ContentProps> { props ->
   val mainScope = MainScope()
-  var inputLetters by useState { "" }
   var board by useState { Board() }
 
-  useEffect {
+  useEffect(props.appState) {
     if (props.appState == AppState.SOLVING) {
       mainScope.launch {
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
         delay(50)
-        if (board.isEmpty() || props.strategy == Strategy.RandomOrder) {
-          val result = Solver(props.dictionary, props.strategy).solve(inputLetters)
-          if (result != null) {
-            board = result
-            props.onSolve(inputLetters)
-          }
+        val result = Solver(props.dictionary, props.strategy).solve(props.inputLetters)
+        if (result != null) {
+          board = result
+          props.onSolve()
+        } else {
+          board = Board()
         }
         props.onAppStateUpdate(AppState.SHOWING_RESULT)
       }
@@ -70,13 +71,12 @@ val Content = FC<ContentProps> { props ->
 
       InputForm {
         appState = props.appState
-        onReset = {
-          inputLetters = ""
-          board = Board()
+        inputLetters = props.inputLetters
+        onInputUpdate = {
+          props.onInputUpdate(it)
           props.onAppStateUpdate(AppState.WAITING_FOR_INPUT)
         }
         onSubmit = {
-          inputLetters = it
           props.onAppStateUpdate(AppState.SOLVING)
         }
       }

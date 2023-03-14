@@ -37,14 +37,10 @@ val App = FC<Props> {
   var dictionarySize by useState { DictionarySize.Small }
   var dictionary by useState { Dictionary.of("") }
   var strategy by useState { Strategy.LongestFirst }
+  var inputLetters by useState { "" }
   var solveHistory by useState { emptySet<String>() }
   var showDrawer by useState { false }
   var showHelpDialog by useState { false }
-
-  fun updateSolveHistory(inputLetters: String) {
-    check(inputLetters.isNotBlank())
-    solveHistory = solveHistory - inputLetters + inputLetters
-  }
 
   useEffectOnce {
     window.localStorage.getItem("dictionaryType")?.let {
@@ -68,14 +64,14 @@ val App = FC<Props> {
       window.localStorage.setItem("dictionaryType", dictionaryType.name)
       window.localStorage.setItem("dictionarySize", dictionarySize.name)
       showDrawer = false
-      state = AppState.WAITING_FOR_INPUT
+      state = if (state == AppState.SHOWING_RESULT) AppState.SOLVING else AppState.WAITING_FOR_INPUT
     }
   }
 
   useEffect(strategy) {
     window.localStorage.setItem("strategy", strategy.name)
     showDrawer = false
-    state = AppState.WAITING_FOR_INPUT
+    state = if (state == AppState.SHOWING_RESULT) AppState.SOLVING else AppState.WAITING_FOR_INPUT
   }
 
   useEffect(solveHistory) {
@@ -113,14 +109,21 @@ val App = FC<Props> {
         this.onStrategyUpdate = { strategy = it }
         this.solveHistory = solveHistory
         this.clearSolveHistory = { solveHistory = emptySet() }
+        this.onInputUpdate = {
+          inputLetters = it
+          showDrawer = false
+          state = AppState.SOLVING
+        }
       }
 
       Content {
         this.appState = state
         this.onAppStateUpdate = { state = it }
-        this.onSolve = { updateSolveHistory(it) }
+        this.onSolve = { solveHistory = solveHistory - inputLetters + inputLetters }
         this.dictionary = dictionary
         this.strategy = strategy
+        this.inputLetters = inputLetters
+        this.onInputUpdate = { inputLetters = it }
       }
 
       Footer {

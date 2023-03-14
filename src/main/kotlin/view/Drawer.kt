@@ -5,7 +5,6 @@ import controller.DictionaryType
 import controller.Strategy
 import csstype.Color
 import csstype.rem
-import kotlinx.browser.window
 import mui.material.Divider
 import mui.material.DrawerAnchor.left
 import mui.material.FormControl
@@ -38,6 +37,7 @@ external interface DrawerProps : Props {
   var onStrategyUpdate: (Strategy) -> Unit
   var solveHistory: Set<String>
   var clearSolveHistory: () -> Unit
+  var onInputUpdate: (String) -> Unit
 }
 
 val Drawer = FC<DrawerProps> { props ->
@@ -131,7 +131,7 @@ val Drawer = FC<DrawerProps> { props ->
           props.solveHistory.reversed().forEach { inputLetters ->
             ListItemButton {
               onClick = {
-                window.alert(inputLetters)
+                props.onInputUpdate(inputLetters)
               }
               ListItemText {
                 +inputLetters
