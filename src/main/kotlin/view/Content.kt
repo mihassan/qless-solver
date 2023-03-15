@@ -16,12 +16,11 @@ import mui.system.responsive
 import mui.system.sx
 import react.FC
 import react.Props
+import react.useContext
 import react.useEffect
 import react.useState
 
 external interface ContentProps : Props {
-  var appState: AppState
-  var onAppStateUpdate: (AppState) -> Unit
   var dictionary: Dictionary
   var strategy: Strategy
   var inputLetters: String
@@ -31,10 +30,11 @@ external interface ContentProps : Props {
 
 val Content = FC<ContentProps> { props ->
   val mainScope = MainScope()
+  var appState by useContext(AppStateContext)
   var board by useState { Board() }
 
-  useEffect(props.appState) {
-    if (props.appState == AppState.SOLVING) {
+  useEffect(appState) {
+    if (appState == AppState.SOLVING) {
       mainScope.launch {
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
@@ -46,7 +46,7 @@ val Content = FC<ContentProps> { props ->
         } else {
           board = Board()
         }
-        props.onAppStateUpdate(AppState.SHOWING_RESULT)
+        appState = AppState.SHOWING_RESULT
       }
     }
   }
@@ -70,18 +70,18 @@ val Content = FC<ContentProps> { props ->
       spacing = responsive(4)
 
       InputForm {
-        appState = props.appState
+        this.appState = appState
         inputLetters = props.inputLetters
         onInputUpdate = {
           props.onInputUpdate(it)
-          props.onAppStateUpdate(AppState.WAITING_FOR_INPUT)
+          appState = AppState.WAITING_FOR_INPUT
         }
         onSubmit = {
-          props.onAppStateUpdate(AppState.SOLVING)
+          appState = AppState.SOLVING
         }
       }
 
-      when (props.appState) {
+      when (appState) {
         AppState.SOLVING -> Alert {
           severity = AlertColor.info
           +"Solving, please wait..."

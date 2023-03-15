@@ -10,12 +10,11 @@ import mui.material.Typography
 import mui.system.sx
 import react.FC
 import react.Props
+import react.useContext
 
-external interface FooterProps : Props {
-  var appState: AppState
-}
+val Footer = FC<Props> {
+  val appState by useContext(AppStateContext)
 
-val Footer = FC<FooterProps> { props ->
   Box {
     Divider {}
     Typography {
@@ -25,7 +24,7 @@ val Footer = FC<FooterProps> { props ->
         padding = 16.px
         textAlign = TextAlign.end
       }
-      +"Current state: ${props.appState.displayText}"
+      +"Current state: ${appState.displayText}"
     }
   }
 }
