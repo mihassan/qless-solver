@@ -39,8 +39,6 @@ import react.useEffectOnce
 external interface DrawerProps : Props {
   var isOpen: Boolean
   var onClose: () -> Unit
-  var solveHistory: Set<String>
-  var clearSolveHistory: () -> Unit
   var onInputUpdate: (String) -> Unit
   var onDictionaryUpdate: (Dictionary) -> Unit
 }
@@ -49,6 +47,7 @@ val Drawer = FC<DrawerProps> { props ->
   val mainScope = MainScope()
   var appState by useContext(AppStateContext)
   var configuration by useContext(ConfigurationContext)
+  var solveHistory by useContext(SolveHistoryContext)
 
   useEffectOnce {
     var (dictionaryType, dictionarySize, strategy) = configuration
@@ -90,6 +89,16 @@ val Drawer = FC<DrawerProps> { props ->
       AppState.SHOWING_RESULT -> AppState.SOLVING
       else -> AppState.WAITING_FOR_INPUT
     }
+  }
+
+  useEffectOnce {
+    window.localStorage.getItem("solveHistory")?.let {
+      solveHistory = it.split(", ").filter { it.isNotBlank() }.take(10).toSet()
+    }
+  }
+
+  useEffect(solveHistory) {
+    window.localStorage.setItem("solveHistory", solveHistory.joinToString())
   }
 
   SwipeableDrawer {
@@ -172,13 +181,13 @@ val Drawer = FC<DrawerProps> { props ->
           }
         }
       }
-      if (props.solveHistory.isNotEmpty()) {
+      if (solveHistory.isNotEmpty()) {
         Divider {}
         List {
           subheader = ListSubheader.create {
             +"History"
           }
-          props.solveHistory.reversed().forEach { inputLetters ->
+          solveHistory.reversed().forEach { inputLetters ->
             ListItemButton {
               onClick = {
                 props.onInputUpdate(inputLetters)
@@ -191,7 +200,7 @@ val Drawer = FC<DrawerProps> { props ->
             }
           }
           ListItemButton {
-            onClick = { props.clearSolveHistory() }
+            onClick = { solveHistory = emptySet() }
             ListItemText {
               Typography {
                 sx {

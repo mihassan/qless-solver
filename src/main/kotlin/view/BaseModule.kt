@@ -17,20 +17,25 @@ val AppStateContext = createContext<StateInstance<AppState>>()
 
 val ConfigurationContext = createContext<StateInstance<Configuration>>()
 
+var SolveHistoryContext = createContext<StateInstance<Set<String>>>()
+
 val BaseModule = FC<PropsWithChildren> { props ->
   val themeState = useState { Themes.Light }
   val (theme) = themeState
   val appState = useState { AppState.PAGE_OPENED }
   val configuration = useState { Configuration.Default }
+  val solveHistory = useState { emptySet<String>() }
 
   ThemeContext(themeState) {
     AppStateContext(appState) {
       ConfigurationContext(configuration) {
-        ThemeProvider {
-          this.theme = theme
+        SolveHistoryContext(solveHistory) {
+          ThemeProvider {
+            this.theme = theme
 
-          CssBaseline()
-          +props.children
+            CssBaseline()
+            +props.children
+          }
         }
       }
     }
