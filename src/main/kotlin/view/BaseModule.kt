@@ -2,6 +2,7 @@ package view
 
 import model.AppState
 import model.Configuration
+import model.Dictionary
 import mui.material.CssBaseline
 import mui.material.styles.Theme
 import mui.material.styles.ThemeProvider
@@ -17,6 +18,8 @@ val AppStateContext = createContext<StateInstance<AppState>>()
 
 val ConfigurationContext = createContext<StateInstance<Configuration>>()
 
+var DictionaryContext = createContext<StateInstance<Dictionary>>()
+
 var SolveHistoryContext = createContext<StateInstance<Set<String>>>()
 
 val BaseModule = FC<PropsWithChildren> { props ->
@@ -24,17 +27,20 @@ val BaseModule = FC<PropsWithChildren> { props ->
   val (theme) = themeState
   val appState = useState { AppState.PAGE_OPENED }
   val configuration = useState { Configuration.Default }
+  val dictionary = useState { Dictionary.of("") }
   val solveHistory = useState { emptySet<String>() }
 
   ThemeContext(themeState) {
     AppStateContext(appState) {
       ConfigurationContext(configuration) {
-        SolveHistoryContext(solveHistory) {
-          ThemeProvider {
-            this.theme = theme
+        DictionaryContext(dictionary) {
+          SolveHistoryContext(solveHistory) {
+            ThemeProvider {
+              this.theme = theme
 
-            CssBaseline()
-            +props.children
+              CssBaseline()
+              +props.children
+            }
           }
         }
       }

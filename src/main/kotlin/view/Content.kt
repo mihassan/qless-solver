@@ -7,7 +7,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.AppState
 import model.Board
-import model.Dictionary
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.Container
@@ -21,7 +20,6 @@ import react.useEffect
 import react.useState
 
 external interface ContentProps : Props {
-  var dictionary: Dictionary
   var inputLetters: String
   var onInputUpdate: (String) -> Unit
 }
@@ -30,6 +28,7 @@ val Content = FC<ContentProps> { props ->
   val mainScope = MainScope()
   var appState by useContext(AppStateContext)
   val configuration by useContext(ConfigurationContext)
+  val dictionary by useContext(DictionaryContext)
   var solveHistory by useContext(SolveHistoryContext)
   var board by useState { Board() }
 
@@ -39,7 +38,7 @@ val Content = FC<ContentProps> { props ->
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
         delay(50)
-        val result = Solver(props.dictionary, configuration.strategy).solve(props.inputLetters)
+        val result = Solver(dictionary, configuration.strategy).solve(props.inputLetters)
         if (result != null) {
           board = result
           solveHistory = solveHistory - props.inputLetters + props.inputLetters
@@ -51,7 +50,7 @@ val Content = FC<ContentProps> { props ->
     }
   }
 
-  useEffect(props.dictionary) {
+  useEffect(dictionary) {
     board = Board()
   }
 

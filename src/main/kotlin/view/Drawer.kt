@@ -11,7 +11,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import model.AppState
 import model.Configuration
-import model.Dictionary
 import mui.material.Divider
 import mui.material.DrawerAnchor.left
 import mui.material.FormControl
@@ -40,13 +39,13 @@ external interface DrawerProps : Props {
   var isOpen: Boolean
   var onClose: () -> Unit
   var onInputUpdate: (String) -> Unit
-  var onDictionaryUpdate: (Dictionary) -> Unit
 }
 
 val Drawer = FC<DrawerProps> { props ->
   val mainScope = MainScope()
   var appState by useContext(AppStateContext)
   var configuration by useContext(ConfigurationContext)
+  var dictionary by useContext(DictionaryContext)
   var solveHistory by useContext(SolveHistoryContext)
 
   useEffectOnce {
@@ -66,9 +65,8 @@ val Drawer = FC<DrawerProps> { props ->
   useEffect(configuration.dictionaryType, configuration.dictionarySize) {
     appState = AppState.LOADING_DICTIONARY
     mainScope.launch {
-      val dictionary =
+      dictionary =
         DictionaryLoader(configuration.dictionaryType, configuration.dictionarySize).load()
-      props.onDictionaryUpdate(dictionary)
 
       window.localStorage.setItem("dictionaryType", configuration.dictionaryType.name)
       window.localStorage.setItem("dictionarySize", configuration.dictionarySize.name)
