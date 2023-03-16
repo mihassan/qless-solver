@@ -9,6 +9,8 @@ import csstype.rem
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import model.AppState
+import model.Configuration
 import model.Dictionary
 import mui.material.Divider
 import mui.material.DrawerAnchor.left
@@ -33,13 +35,10 @@ import react.create
 import react.useContext
 import react.useEffect
 import react.useEffectOnce
-import react.useState
 
 external interface DrawerProps : Props {
   var isOpen: Boolean
   var onClose: () -> Unit
-  var strategy: Strategy
-  var onStrategyUpdate: (Strategy) -> Unit
   var solveHistory: Set<String>
   var clearSolveHistory: () -> Unit
   var onInputUpdate: (String) -> Unit
@@ -49,10 +48,10 @@ external interface DrawerProps : Props {
 val Drawer = FC<DrawerProps> { props ->
   val mainScope = MainScope()
   var appState by useContext(AppStateContext)
-  var dictionaryType by useState { DictionaryType.QLess }
-  var dictionarySize by useState { DictionarySize.Small }
+  var configuration by useContext(ConfigurationContext)
 
   useEffectOnce {
+    var (dictionaryType, dictionarySize, strategy) = configuration
     window.localStorage.getItem("dictionaryType")?.let {
       dictionaryType = DictionaryType.valueOf(it)
     }
@@ -60,18 +59,20 @@ val Drawer = FC<DrawerProps> { props ->
       dictionarySize = DictionarySize.valueOf(it)
     }
     window.localStorage.getItem("strategy")?.let {
-      props.onStrategyUpdate(Strategy.valueOf(it))
+      strategy = Strategy.valueOf(it)
     }
+    configuration = Configuration(dictionaryType, dictionarySize, strategy)
   }
 
-  useEffect(dictionaryType, dictionarySize) {
+  useEffect(configuration.dictionaryType, configuration.dictionarySize) {
     appState = AppState.LOADING_DICTIONARY
     mainScope.launch {
-      val dictionary = DictionaryLoader(dictionaryType, dictionarySize).load()
+      val dictionary =
+        DictionaryLoader(configuration.dictionaryType, configuration.dictionarySize).load()
       props.onDictionaryUpdate(dictionary)
 
-      window.localStorage.setItem("dictionaryType", dictionaryType.name)
-      window.localStorage.setItem("dictionarySize", dictionarySize.name)
+      window.localStorage.setItem("dictionaryType", configuration.dictionaryType.name)
+      window.localStorage.setItem("dictionarySize", configuration.dictionarySize.name)
 
       props.onClose()
       appState = when (appState) {
@@ -81,8 +82,8 @@ val Drawer = FC<DrawerProps> { props ->
     }
   }
 
-  useEffect(props.strategy) {
-    window.localStorage.setItem("strategy", props.strategy.name)
+  useEffect(configuration.strategy) {
+    window.localStorage.setItem("strategy", configuration.strategy.name)
 
     props.onClose()
     appState = when (appState) {
@@ -109,9 +110,10 @@ val Drawer = FC<DrawerProps> { props ->
               +"Dictionary type"
             }
             Select {
-              value = dictionaryType
+              value = configuration.dictionaryType
               onChange = { event, _ ->
-                dictionaryType = DictionaryType.valueOf(event.target.value)
+                configuration =
+                  configuration.copy(dictionaryType = DictionaryType.valueOf(event.target.value))
               }
               DictionaryType.values().map { type ->
                 MenuItem {
@@ -132,9 +134,10 @@ val Drawer = FC<DrawerProps> { props ->
               +"Dictionary size"
             }
             Select {
-              value = dictionarySize
+              value = configuration.dictionarySize
               onChange = { event, _ ->
-                dictionarySize = DictionarySize.valueOf(event.target.value)
+                configuration =
+                  configuration.copy(dictionarySize = DictionarySize.valueOf(event.target.value))
               }
               DictionarySize.values().map { size ->
                 MenuItem {
@@ -155,9 +158,9 @@ val Drawer = FC<DrawerProps> { props ->
               +"Solving strategy"
             }
             Select {
-              value = props.strategy
+              value = configuration.strategy
               onChange = { event, _ ->
-                props.onStrategyUpdate(Strategy.valueOf(event.target.value))
+                configuration = configuration.copy(strategy = Strategy.valueOf(event.target.value))
               }
               Strategy.values().map { strategy ->
                 MenuItem {

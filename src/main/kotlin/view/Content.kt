@@ -1,11 +1,11 @@
 package view
 
 import controller.Solver
-import controller.Strategy
 import csstype.AlignItems
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import model.AppState
 import model.Board
 import model.Dictionary
 import mui.material.Alert
@@ -22,7 +22,6 @@ import react.useState
 
 external interface ContentProps : Props {
   var dictionary: Dictionary
-  var strategy: Strategy
   var inputLetters: String
   var onInputUpdate: (String) -> Unit
   var onSolve: () -> Unit
@@ -31,6 +30,7 @@ external interface ContentProps : Props {
 val Content = FC<ContentProps> { props ->
   val mainScope = MainScope()
   var appState by useContext(AppStateContext)
+  val configuration by useContext(ConfigurationContext)
   var board by useState { Board() }
 
   useEffect(appState) {
@@ -39,7 +39,7 @@ val Content = FC<ContentProps> { props ->
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
         delay(50)
-        val result = Solver(props.dictionary, props.strategy).solve(props.inputLetters)
+        val result = Solver(props.dictionary, configuration.strategy).solve(props.inputLetters)
         if (result != null) {
           board = result
           props.onSolve()
@@ -55,7 +55,7 @@ val Content = FC<ContentProps> { props ->
     board = Board()
   }
 
-  useEffect(props.strategy) {
+  useEffect(configuration.strategy) {
     board = Board()
   }
 

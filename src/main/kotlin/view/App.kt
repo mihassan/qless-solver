@@ -18,18 +18,13 @@ import react.useEffectOnce
 import react.useState
 
 val App = FC<Props> {
-  val appState = useState { AppState.PAGE_OPENED }
   var dictionary by useState { Dictionary.of("") }
-  var strategy by useState { Strategy.LongestFirst }
   var inputLetters by useState { "" }
   var solveHistory by useState { emptySet<String>() }
   var showDrawer by useState { false }
   var showHelpDialog by useState { false }
 
   useEffectOnce {
-    window.localStorage.getItem("strategy")?.let {
-      strategy = Strategy.valueOf(it)
-    }
     window.localStorage.getItem("solveHistory")?.let {
       solveHistory = it.split(", ").filter { it.isNotBlank() }.take(10).toSet()
     }
@@ -39,52 +34,47 @@ val App = FC<Props> {
     window.localStorage.setItem("solveHistory", solveHistory.joinToString())
   }
 
-  ThemeModule {
-    AppStateContext(appState) {
-      Box {
-        sx {
-          display = Display.grid
-          gridTemplateRows = array(Auto.auto, 1.fr, Auto.auto)
-          alignItems = AlignItems.center
-          height = 100.dvh
+  BaseModule {
+    Box {
+      sx {
+        display = Display.grid
+        gridTemplateRows = array(Auto.auto, 1.fr, Auto.auto)
+        alignItems = AlignItems.center
+        height = 100.dvh
+      }
+
+      gap = 2
+
+      Header {
+        this.toggleDrawer = {
+          showDrawer = !showDrawer
         }
-
-        gap = 2
-
-        Header {
-          this.toggleDrawer = {
-            showDrawer = !showDrawer
-          }
-          this.toggleHelpDialog = {
-            showHelpDialog = !showHelpDialog
-          }
+        this.toggleHelpDialog = {
+          showHelpDialog = !showHelpDialog
         }
+      }
 
-        Drawer {
-          this.isOpen = showDrawer
-          this.onClose = { showDrawer = false }
-          this.strategy = strategy
-          this.onStrategyUpdate = { strategy = it }
-          this.solveHistory = solveHistory
-          this.clearSolveHistory = { solveHistory = emptySet() }
-          this.onInputUpdate = { inputLetters = it }
-          this.onDictionaryUpdate = { dictionary = it }
-        }
+      Drawer {
+        this.isOpen = showDrawer
+        this.onClose = { showDrawer = false }
+        this.solveHistory = solveHistory
+        this.clearSolveHistory = { solveHistory = emptySet() }
+        this.onInputUpdate = { inputLetters = it }
+        this.onDictionaryUpdate = { dictionary = it }
+      }
 
-        Content {
-          this.onSolve = { solveHistory = solveHistory - inputLetters + inputLetters }
-          this.dictionary = dictionary
-          this.strategy = strategy
-          this.inputLetters = inputLetters
-          this.onInputUpdate = { inputLetters = it }
-        }
+      Content {
+        this.onSolve = { solveHistory = solveHistory - inputLetters + inputLetters }
+        this.dictionary = dictionary
+        this.inputLetters = inputLetters
+        this.onInputUpdate = { inputLetters = it }
+      }
 
-        Footer {}
+      Footer {}
 
-        HelpDialog {
-          isOpen = showHelpDialog
-          onClose = { showHelpDialog = false }
-        }
+      HelpDialog {
+        isOpen = showHelpDialog
+        onClose = { showHelpDialog = false }
       }
     }
   }

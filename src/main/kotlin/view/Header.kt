@@ -23,6 +23,8 @@ import react.Props
 import react.ReactNode
 import react.dom.html.ReactHTML
 import react.useContext
+import react.useEffect
+import react.useEffectOnce
 
 external interface HeaderProps : Props {
   var toggleDrawer: () -> Unit
@@ -31,6 +33,20 @@ external interface HeaderProps : Props {
 
 val Header = FC<HeaderProps> { props ->
   var theme by useContext(ThemeContext)
+
+  useEffectOnce {
+    window.localStorage.getItem("theme")?.let {
+      theme = when (it) {
+        "light" -> Themes.Light
+        "dark" -> Themes.Dark
+        else -> theme
+      }
+    }
+  }
+
+  useEffect(theme) {
+    window.localStorage.setItem("theme", theme.palette.mode.toString())
+  }
 
   AppBar {
     sx {

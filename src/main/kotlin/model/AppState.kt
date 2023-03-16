@@ -1,7 +1,4 @@
-package view
-
-import react.StateInstance
-import react.createContext
+package model
 
 enum class AppState(val displayText: String) {
   PAGE_OPENED("page opened"),
@@ -10,5 +7,3 @@ enum class AppState(val displayText: String) {
   SOLVING("solving..."),
   SHOWING_RESULT("showing result"),
 }
-
-val AppStateContext = createContext<StateInstance<AppState>>()
