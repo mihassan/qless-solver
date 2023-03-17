@@ -13,7 +13,6 @@ import react.Props
 import react.useState
 
 val App = FC<Props> {
-  var inputLetters by useState { "" }
   var showDrawer by useState { false }
   var showHelpDialog by useState { false }
 
@@ -40,13 +39,9 @@ val App = FC<Props> {
       Drawer {
         this.isOpen = showDrawer
         this.onClose = { showDrawer = false }
-        this.onInputUpdate = { inputLetters = it }
       }
 
-      Content {
-        this.inputLetters = inputLetters
-        this.onInputUpdate = { inputLetters = it }
-      }
+      Content {}
 
       Footer {}
 

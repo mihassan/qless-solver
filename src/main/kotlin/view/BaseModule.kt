@@ -23,12 +23,12 @@ var DictionaryContext = createContext<StateInstance<Dictionary>>()
 var SolveHistoryContext = createContext<StateInstance<Set<String>>>()
 
 val BaseModule = FC<PropsWithChildren> { props ->
-  val themeState = useState { Themes.Light }
-  val (theme) = themeState
-  val appState = useState { AppState.PAGE_OPENED }
-  val configuration = useState { Configuration.Default }
-  val dictionary = useState { Dictionary.of("") }
-  val solveHistory = useState { emptySet<String>() }
+  val themeState: StateInstance<Theme> = useState { Themes.Light }
+  val (theme: Theme) = themeState
+  val appState: StateInstance<AppState> = useState { AppState.PageOpened }
+  val configuration: StateInstance<Configuration> = useState { Configuration.Default }
+  val dictionary: StateInstance<Dictionary> = useState { Dictionary.of("") }
+  val solveHistory: StateInstance<Set<String>> = useState { emptySet<String>() }
 
   ThemeContext(themeState) {
     AppStateContext(appState) {
@@ -37,7 +37,6 @@ val BaseModule = FC<PropsWithChildren> { props ->
           SolveHistoryContext(solveHistory) {
             ThemeProvider {
               this.theme = theme
-
               CssBaseline()
               +props.children
             }

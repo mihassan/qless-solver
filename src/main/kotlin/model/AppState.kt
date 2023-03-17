@@ -1,9 +1,21 @@
 package model
 
-enum class AppState(val displayText: String) {
-  PAGE_OPENED("page opened"),
-  LOADING_DICTIONARY("loading dictionary"),
-  WAITING_FOR_INPUT("waiting for input"),
-  SOLVING("solving..."),
-  SHOWING_RESULT("showing result"),
+sealed class AppState(val displayText: String) {
+  object PageOpened: AppState("page opened")
+  object LoadingDictionary: AppState("loading dictionary")
+  data class WaitingForInput(val inputLetters: String): AppState("waiting for input")
+  data class Solving(val inputLetters: String): AppState("solving...")
+  data class ShowingResult(val inputLetters: String, val board: Board): AppState("showing result")
+  data class NoSolutionFound(val inputLetters: String): AppState("no solution found")
+
+  companion object {
+    fun AppState.getInputLetters(): String = when(this) {
+      PageOpened -> ""
+      LoadingDictionary -> ""
+      is NoSolutionFound -> inputLetters
+      is ShowingResult -> inputLetters
+      is Solving -> inputLetters
+      is WaitingForInput -> inputLetters
+    }
+  }
 }

@@ -6,29 +6,25 @@ import csstype.TextAlign
 import csstype.px
 import js.core.jso
 import model.AppState
+import model.AppState.Companion.getInputLetters
 import mui.material.FormControlVariant
 import mui.material.TextField
 import react.FC
 import react.Props
 import react.dom.events.FormEvent
 import react.dom.onChange
-import react.useState
+import react.useContext
 import web.html.HTMLDivElement
 import web.html.HTMLInputElement
 
-external interface InputFormProps : Props {
-  var appState: AppState
-  var inputLetters: String
-  var onInputUpdate: (String) -> Unit
-  var onSubmit: () -> Unit
-}
+val InputForm = FC<Props> {
+  var appState by useContext(AppStateContext)
 
-val InputForm = FC<InputFormProps> { props ->
   TextField {
     autoFocus = true
-    disabled = props.appState == AppState.SOLVING
+    disabled = appState is AppState.Solving
     variant = FormControlVariant.standard
-    value = props.inputLetters
+    value = appState.getInputLetters()
     InputProps = jso {
       inputProps = jso {
         style = jso {
@@ -41,13 +37,13 @@ val InputForm = FC<InputFormProps> { props ->
     }
     onKeyDown = { event ->
       if (event.key == "Enter") {
-        props.onSubmit()
+        appState = AppState.Solving(appState.getInputLetters())
       }
     }
     onChange = { event ->
       val newInputLetters = event.validateInput()
-      if (props.inputLetters != newInputLetters) {
-        props.onInputUpdate(newInputLetters)
+      if (appState.getInputLetters() != newInputLetters) {
+        appState = AppState.WaitingForInput(newInputLetters)
       }
     }
   }

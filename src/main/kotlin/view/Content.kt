@@ -6,7 +6,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.AppState
-import model.Board
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.Container
@@ -17,45 +16,29 @@ import react.FC
 import react.Props
 import react.useContext
 import react.useEffect
-import react.useState
 
-external interface ContentProps : Props {
-  var inputLetters: String
-  var onInputUpdate: (String) -> Unit
-}
-
-val Content = FC<ContentProps> { props ->
+val Content = FC<Props> {
   val mainScope = MainScope()
   var appState by useContext(AppStateContext)
   val configuration by useContext(ConfigurationContext)
   val dictionary by useContext(DictionaryContext)
   var solveHistory by useContext(SolveHistoryContext)
-  var board by useState { Board() }
 
   useEffect(appState) {
-    if (appState == AppState.SOLVING) {
+    (appState as? AppState.Solving)?.inputLetters?.let { inputLetters ->
       mainScope.launch {
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
         delay(50)
-        val result = Solver(dictionary, configuration.strategy).solve(props.inputLetters)
+        val result = Solver(dictionary, configuration.strategy).solve(inputLetters)
         if (result != null) {
-          board = result
-          solveHistory = solveHistory - props.inputLetters + props.inputLetters
+          solveHistory = solveHistory - inputLetters + inputLetters
+          appState = AppState.ShowingResult(inputLetters, result)
         } else {
-          board = Board()
+          appState = AppState.NoSolutionFound(inputLetters)
         }
-        appState = AppState.SHOWING_RESULT
       }
     }
-  }
-
-  useEffect(dictionary) {
-    board = Board()
-  }
-
-  useEffect(configuration.strategy) {
-    board = Board()
   }
 
   Container {
@@ -68,33 +51,22 @@ val Content = FC<ContentProps> { props ->
 
       spacing = responsive(4)
 
-      InputForm {
-        this.appState = appState
-        inputLetters = props.inputLetters
-        onInputUpdate = {
-          props.onInputUpdate(it)
-          appState = AppState.WAITING_FOR_INPUT
-        }
-        onSubmit = {
-          appState = AppState.SOLVING
-        }
-      }
+      InputForm {}
 
       when (appState) {
-        AppState.SOLVING -> Alert {
+        is AppState.Solving -> Alert {
           severity = AlertColor.info
           +"Solving, please wait..."
         }
-        AppState.SHOWING_RESULT -> {
-          if (!board.isEmpty()) {
-            Grid {
-              letters = board.grid()
-            }
-          } else {
-            Alert {
-              severity = AlertColor.error
-              +"Sorry, no solution found"
-            }
+        is AppState.ShowingResult -> {
+          Grid {
+            letters = (appState as AppState.ShowingResult).board.grid()
+          }
+        }
+        is AppState.NoSolutionFound -> {
+          Alert {
+            severity = AlertColor.error
+            +"Sorry, no solution found"
           }
         }
         else -> {}

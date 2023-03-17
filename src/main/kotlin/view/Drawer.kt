@@ -10,6 +10,7 @@ import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import model.AppState
+import model.AppState.Companion.getInputLetters
 import model.Configuration
 import mui.material.Divider
 import mui.material.DrawerAnchor.left
@@ -38,7 +39,6 @@ import react.useEffectOnce
 external interface DrawerProps : Props {
   var isOpen: Boolean
   var onClose: () -> Unit
-  var onInputUpdate: (String) -> Unit
 }
 
 val Drawer = FC<DrawerProps> { props ->
@@ -63,7 +63,7 @@ val Drawer = FC<DrawerProps> { props ->
   }
 
   useEffect(configuration.dictionaryType, configuration.dictionarySize) {
-    appState = AppState.LOADING_DICTIONARY
+    appState = AppState.LoadingDictionary
     mainScope.launch {
       dictionary =
         DictionaryLoader(configuration.dictionaryType, configuration.dictionarySize).load()
@@ -73,8 +73,9 @@ val Drawer = FC<DrawerProps> { props ->
 
       props.onClose()
       appState = when (appState) {
-        AppState.SHOWING_RESULT -> AppState.SOLVING
-        else -> AppState.WAITING_FOR_INPUT
+        is AppState.ShowingResult -> AppState.Solving(appState.getInputLetters())
+        is AppState.NoSolutionFound -> AppState.Solving(appState.getInputLetters())
+        else -> AppState.WaitingForInput(appState.getInputLetters())
       }
     }
   }
@@ -84,8 +85,8 @@ val Drawer = FC<DrawerProps> { props ->
 
     props.onClose()
     appState = when (appState) {
-      AppState.SHOWING_RESULT -> AppState.SOLVING
-      else -> AppState.WAITING_FOR_INPUT
+      is AppState.ShowingResult -> AppState.Solving(appState.getInputLetters())
+      else -> AppState.WaitingForInput(appState.getInputLetters())
     }
   }
 
@@ -188,9 +189,8 @@ val Drawer = FC<DrawerProps> { props ->
           solveHistory.reversed().forEach { inputLetters ->
             ListItemButton {
               onClick = {
-                props.onInputUpdate(inputLetters)
                 props.onClose()
-                appState = AppState.SOLVING
+                appState = AppState.Solving(inputLetters)
               }
               ListItemText {
                 +inputLetters
