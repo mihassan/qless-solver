@@ -4,6 +4,7 @@ import csstype.Position
 import csstype.integer
 import csstype.number
 import kotlinx.browser.window
+import model.ModalState
 import mui.icons.material.DarkMode
 import mui.icons.material.GitHub
 import mui.icons.material.LightMode
@@ -26,13 +27,9 @@ import react.useContext
 import react.useEffect
 import react.useEffectOnce
 
-external interface HeaderProps : Props {
-  var toggleDrawer: () -> Unit
-  var toggleHelpDialog: () -> Unit
-}
-
-val Header = FC<HeaderProps> { props ->
+val Header = FC<Props> {
   var theme by useContext(ThemeContext)
+  var modalState by useContext(ModalStateContext)
 
   useEffectOnce {
     window.localStorage.getItem("theme")?.let {
@@ -58,7 +55,13 @@ val Header = FC<HeaderProps> { props ->
       IconButton {
         size = Size.large
         color = IconButtonColor.inherit
-        onClick = { props.toggleDrawer() }
+        onClick = {
+          modalState = when(modalState) {
+            ModalState.NONE -> ModalState.DRAWER
+            ModalState.DRAWER -> ModalState.NONE
+            ModalState.HELP_DIALOG -> ModalState.DRAWER
+          }
+        }
         Menu()
       }
 
@@ -98,7 +101,13 @@ val Header = FC<HeaderProps> { props ->
         title = ReactNode("How to Use")
         IconButton {
           color = IconButtonColor.inherit
-          onClick = { props.toggleHelpDialog() }
+          onClick = {
+            modalState = when(modalState) {
+              ModalState.NONE -> ModalState.HELP_DIALOG
+              ModalState.DRAWER -> ModalState.HELP_DIALOG
+              ModalState.HELP_DIALOG -> ModalState.NONE
+            }
+          }
           QuestionMark()
         }
       }

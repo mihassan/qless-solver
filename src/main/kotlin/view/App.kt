@@ -10,12 +10,8 @@ import mui.material.Box
 import mui.system.sx
 import react.FC
 import react.Props
-import react.useState
 
 val App = FC<Props> {
-  var showDrawer by useState { false }
-  var showHelpDialog by useState { false }
-
   BaseModule {
     Box {
       sx {
@@ -27,28 +23,15 @@ val App = FC<Props> {
 
       gap = 2
 
-      Header {
-        this.toggleDrawer = {
-          showDrawer = !showDrawer
-        }
-        this.toggleHelpDialog = {
-          showHelpDialog = !showHelpDialog
-        }
-      }
+      Header {}
 
-      Drawer {
-        this.isOpen = showDrawer
-        this.onClose = { showDrawer = false }
-      }
+      Drawer {}
 
       Content {}
 
       Footer {}
 
-      HelpDialog {
-        isOpen = showHelpDialog
-        onClose = { showHelpDialog = false }
-      }
+      HelpDialog {}
     }
   }
 }

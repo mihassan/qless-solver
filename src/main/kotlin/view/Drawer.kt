@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import model.AppState
 import model.AppState.Companion.getInputLetters
 import model.Configuration
+import model.ModalState
 import mui.material.Divider
 import mui.material.DrawerAnchor.left
 import mui.material.FormControl
@@ -36,17 +37,21 @@ import react.useContext
 import react.useEffect
 import react.useEffectOnce
 
-external interface DrawerProps : Props {
-  var isOpen: Boolean
-  var onClose: () -> Unit
-}
-
-val Drawer = FC<DrawerProps> { props ->
+val Drawer = FC<Props> {
   val mainScope = MainScope()
   var appState by useContext(AppStateContext)
+  var modalState by useContext(ModalStateContext)
   var configuration by useContext(ConfigurationContext)
   var dictionary by useContext(DictionaryContext)
   var solveHistory by useContext(SolveHistoryContext)
+
+  fun closeDrawer() {
+    modalState = when(modalState) {
+      ModalState.NONE -> ModalState.NONE
+      ModalState.DRAWER -> ModalState.NONE
+      ModalState.HELP_DIALOG -> ModalState.HELP_DIALOG
+    }
+  }
 
   useEffectOnce {
     var (dictionaryType, dictionarySize, strategy) = configuration
@@ -71,7 +76,7 @@ val Drawer = FC<DrawerProps> { props ->
       window.localStorage.setItem("dictionaryType", configuration.dictionaryType.name)
       window.localStorage.setItem("dictionarySize", configuration.dictionarySize.name)
 
-      props.onClose()
+      closeDrawer()
       appState = when (appState) {
         is AppState.ShowingResult -> AppState.Solving(appState.getInputLetters())
         is AppState.NoSolutionFound -> AppState.Solving(appState.getInputLetters())
@@ -83,7 +88,7 @@ val Drawer = FC<DrawerProps> { props ->
   useEffect(configuration.strategy) {
     window.localStorage.setItem("strategy", configuration.strategy.name)
 
-    props.onClose()
+    closeDrawer()
     appState = when (appState) {
       is AppState.ShowingResult -> AppState.Solving(appState.getInputLetters())
       else -> AppState.WaitingForInput(appState.getInputLetters())
@@ -102,8 +107,8 @@ val Drawer = FC<DrawerProps> { props ->
 
   SwipeableDrawer {
     anchor = left
-    open = props.isOpen
-    onClose = { props.onClose() }
+    open = modalState == ModalState.DRAWER
+    onClose = { closeDrawer() }
 
     Box {
       Toolbar()
@@ -189,7 +194,7 @@ val Drawer = FC<DrawerProps> { props ->
           solveHistory.reversed().forEach { inputLetters ->
             ListItemButton {
               onClick = {
-                props.onClose()
+                closeDrawer()
                 appState = AppState.Solving(inputLetters)
               }
               ListItemText {

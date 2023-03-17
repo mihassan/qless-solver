@@ -2,6 +2,7 @@ package view
 
 import csstype.ListStylePosition
 import emotion.react.css
+import model.ModalState
 import mui.material.Dialog
 import mui.material.DialogContent
 import mui.material.DialogContentText
@@ -11,16 +12,20 @@ import react.Props
 import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.ul
+import react.useContext
 
-external interface HelpDialogProps : Props {
-  var isOpen: Boolean
-  var onClose: () -> Unit
-}
+val HelpDialog = FC<Props> {
+  var modalState by useContext(ModalStateContext)
 
-val HelpDialog = FC<HelpDialogProps> { props ->
   Dialog {
-    open = props.isOpen
-    onClose = { _, _ -> props.onClose() }
+    open = modalState == ModalState.HELP_DIALOG
+    onClose = { _, _ ->
+      modalState = when (modalState) {
+        ModalState.NONE -> ModalState.NONE
+        ModalState.DRAWER -> ModalState.DRAWER
+        ModalState.HELP_DIALOG -> ModalState.NONE
+      }
+    }
     DialogTitle {
       +"How to Use"
     }
