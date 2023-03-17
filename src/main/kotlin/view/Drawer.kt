@@ -45,14 +45,6 @@ val Drawer = FC<Props> {
   var dictionary by useContext(DictionaryContext)
   var solveHistory by useContext(SolveHistoryContext)
 
-  fun closeDrawer() {
-    modalState = when(modalState) {
-      ModalState.NONE -> ModalState.NONE
-      ModalState.DRAWER -> ModalState.NONE
-      ModalState.HELP_DIALOG -> ModalState.HELP_DIALOG
-    }
-  }
-
   useEffectOnce {
     var (dictionaryType, dictionarySize, strategy) = configuration
     window.localStorage.getItem("dictionaryType")?.let {
@@ -76,7 +68,7 @@ val Drawer = FC<Props> {
       window.localStorage.setItem("dictionaryType", configuration.dictionaryType.name)
       window.localStorage.setItem("dictionarySize", configuration.dictionarySize.name)
 
-      closeDrawer()
+      modalState = modalState.closeDrawer()
       appState = when (appState) {
         is AppState.ShowingResult -> AppState.Solving(appState.getInputLetters())
         is AppState.NoSolutionFound -> AppState.Solving(appState.getInputLetters())
@@ -88,7 +80,7 @@ val Drawer = FC<Props> {
   useEffect(configuration.strategy) {
     window.localStorage.setItem("strategy", configuration.strategy.name)
 
-    closeDrawer()
+    modalState = modalState.closeDrawer()
     appState = when (appState) {
       is AppState.ShowingResult -> AppState.Solving(appState.getInputLetters())
       else -> AppState.WaitingForInput(appState.getInputLetters())
@@ -108,7 +100,9 @@ val Drawer = FC<Props> {
   SwipeableDrawer {
     anchor = left
     open = modalState == ModalState.DRAWER
-    onClose = { closeDrawer() }
+    onClose = {
+      modalState = modalState.closeDrawer()
+    }
 
     Box {
       Toolbar()
@@ -194,7 +188,7 @@ val Drawer = FC<Props> {
           solveHistory.reversed().forEach { inputLetters ->
             ListItemButton {
               onClick = {
-                closeDrawer()
+                modalState = modalState.closeDrawer()
                 appState = AppState.Solving(inputLetters)
               }
               ListItemText {

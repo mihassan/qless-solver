@@ -20,11 +20,7 @@ val HelpDialog = FC<Props> {
   Dialog {
     open = modalState == ModalState.HELP_DIALOG
     onClose = { _, _ ->
-      modalState = when (modalState) {
-        ModalState.NONE -> ModalState.NONE
-        ModalState.DRAWER -> ModalState.DRAWER
-        ModalState.HELP_DIALOG -> ModalState.NONE
-      }
+      modalState = modalState.closeHelpDialog()
     }
     DialogTitle {
       +"How to Use"

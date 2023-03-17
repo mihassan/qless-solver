@@ -4,7 +4,6 @@ import csstype.Position
 import csstype.integer
 import csstype.number
 import kotlinx.browser.window
-import model.ModalState
 import mui.icons.material.DarkMode
 import mui.icons.material.GitHub
 import mui.icons.material.LightMode
@@ -55,13 +54,7 @@ val Header = FC<Props> {
       IconButton {
         size = Size.large
         color = IconButtonColor.inherit
-        onClick = {
-          modalState = when(modalState) {
-            ModalState.NONE -> ModalState.DRAWER
-            ModalState.DRAWER -> ModalState.NONE
-            ModalState.HELP_DIALOG -> ModalState.DRAWER
-          }
-        }
+        onClick = { modalState = modalState.toggleDrawer() }
         Menu()
       }
 
@@ -101,13 +94,7 @@ val Header = FC<Props> {
         title = ReactNode("How to Use")
         IconButton {
           color = IconButtonColor.inherit
-          onClick = {
-            modalState = when(modalState) {
-              ModalState.NONE -> ModalState.HELP_DIALOG
-              ModalState.DRAWER -> ModalState.HELP_DIALOG
-              ModalState.HELP_DIALOG -> ModalState.NONE
-            }
-          }
+          onClick = { modalState = modalState.openHelpDialog() }
           QuestionMark()
         }
       }
