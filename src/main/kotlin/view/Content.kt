@@ -17,6 +17,7 @@ import react.FC
 import react.Props
 import react.useContext
 import react.useEffect
+import web.navigator.navigator
 
 val Content = FC<Props> {
   val mainScope = MainScope()
@@ -34,6 +35,8 @@ val Content = FC<Props> {
         val result = Solver(dictionary, configuration.strategy).solve(inputLetters)
         if (result != null) {
           solveHistory = solveHistory - inputLetters + inputLetters
+          console.log("Found solution:\n${result.show()}")
+          navigator.clipboard.writeText(result.show())
         }
         appState = appState.showResult(result)
       }

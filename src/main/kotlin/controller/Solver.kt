@@ -15,7 +15,7 @@ class Solver(private val dictionary: Dictionary, private val strategy: Strategy)
   fun solve(inputLetters: String): Board? {
     val bagOfInputLetters = inputLetters.filter(Char::isLetter).map(Char::uppercaseChar).frequency()
     val dictionary = with(dictionary.prune(bagOfInputLetters)) {
-      when(strategy) {
+      when (strategy) {
         Strategy.AlphabeticOrder -> sortAlphabeticOrder()
         Strategy.ShortestFirst -> sortShortestFirst()
         Strategy.LongestFirst -> sortLongestFirst()
@@ -71,8 +71,9 @@ class Solver(private val dictionary: Dictionary, private val strategy: Strategy)
         }
       }
 
-    console.log("Dictionary size: ${dictionary.size}")
-    console.log(dictionary.words.joinToString(", "))
+    console.log("\n\n\nStarting a new solve\n\n\n")
+    console.log("Candidate words size: ${dictionary.size}")
+    console.log("Candidate words: ${dictionary.words.joinToString(", ")}")
 
     dictionary.findLeastFrequentLetter()?.let {
       console.log("Starting with letter: $it")
