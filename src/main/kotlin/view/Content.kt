@@ -6,6 +6,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.AppState
+import model.AppState.Companion.showResult
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.Container
@@ -33,10 +34,8 @@ val Content = FC<Props> {
         val result = Solver(dictionary, configuration.strategy).solve(inputLetters)
         if (result != null) {
           solveHistory = solveHistory - inputLetters + inputLetters
-          appState = AppState.ShowingResult(inputLetters, result)
-        } else {
-          appState = AppState.NoSolutionFound(inputLetters)
         }
+        appState = appState.showResult(result)
       }
     }
   }

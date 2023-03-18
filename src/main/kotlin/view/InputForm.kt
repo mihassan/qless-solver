@@ -6,15 +6,15 @@ import csstype.TextAlign
 import csstype.px
 import js.core.jso
 import model.AppState
+import model.AppState.Companion.editInput
 import model.AppState.Companion.getInputLetters
+import model.AppState.Companion.solve
 import mui.material.FormControlVariant
 import mui.material.TextField
 import react.FC
 import react.Props
-import react.dom.events.FormEvent
 import react.dom.onChange
 import react.useContext
-import web.html.HTMLDivElement
 import web.html.HTMLInputElement
 
 val InputForm = FC<Props> {
@@ -37,21 +37,12 @@ val InputForm = FC<Props> {
     }
     onKeyDown = { event ->
       if (event.key == "Enter") {
-        appState = AppState.Solving(appState.getInputLetters())
+        appState = appState.solve()
       }
     }
     onChange = { event ->
-      val newInputLetters = event.validateInput()
-      if (appState.getInputLetters() != newInputLetters) {
-        appState = AppState.WaitingForInput(newInputLetters)
-      }
+      appState = appState.editInput((event.target as HTMLInputElement).value)
     }
   }
 }
 
-private fun FormEvent<HTMLDivElement>.validateInput() =
-  (this.target as HTMLInputElement)
-    .value
-    .filter { it in 'a'..'z' || it in 'A'..'Z' }
-    .uppercase()
-    .take(12)

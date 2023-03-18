@@ -9,8 +9,8 @@ import csstype.rem
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import model.AppState
-import model.AppState.Companion.getInputLetters
+import model.AppState.Companion.loadDictionary
+import model.AppState.Companion.solve
 import model.Configuration
 import model.ModalState
 import mui.material.Divider
@@ -37,6 +37,8 @@ import react.useContext
 import react.useEffect
 import react.useEffectOnce
 
+private const val MAX_SOLVE_HISTORY = 10
+
 val Drawer = FC<Props> {
   val mainScope = MainScope()
   var appState by useContext(AppStateContext)
@@ -60,7 +62,7 @@ val Drawer = FC<Props> {
   }
 
   useEffect(configuration.dictionaryType, configuration.dictionarySize) {
-    appState = AppState.LoadingDictionary
+    appState = appState.loadDictionary()
     mainScope.launch {
       dictionary =
         DictionaryLoader(configuration.dictionaryType, configuration.dictionarySize).load()
@@ -69,11 +71,7 @@ val Drawer = FC<Props> {
       window.localStorage.setItem("dictionarySize", configuration.dictionarySize.name)
 
       modalState = modalState.closeDrawer()
-      appState = when (appState) {
-        is AppState.ShowingResult -> AppState.Solving(appState.getInputLetters())
-        is AppState.NoSolutionFound -> AppState.Solving(appState.getInputLetters())
-        else -> AppState.WaitingForInput(appState.getInputLetters())
-      }
+      appState = appState.solve()
     }
   }
 
@@ -81,15 +79,16 @@ val Drawer = FC<Props> {
     window.localStorage.setItem("strategy", configuration.strategy.name)
 
     modalState = modalState.closeDrawer()
-    appState = when (appState) {
-      is AppState.ShowingResult -> AppState.Solving(appState.getInputLetters())
-      else -> AppState.WaitingForInput(appState.getInputLetters())
-    }
+    appState = appState.solve()
   }
 
   useEffectOnce {
     window.localStorage.getItem("solveHistory")?.let {
-      solveHistory = it.split(", ").filter { it.isNotBlank() }.take(10).toSet()
+      solveHistory = it
+        .split(", ")
+        .filter(String::isNotBlank)
+        .take(MAX_SOLVE_HISTORY)
+        .toSet()
     }
   }
 
@@ -100,9 +99,7 @@ val Drawer = FC<Props> {
   SwipeableDrawer {
     anchor = left
     open = modalState == ModalState.DRAWER
-    onClose = {
-      modalState = modalState.closeDrawer()
-    }
+    onClose = { modalState = modalState.closeDrawer() }
 
     Box {
       Toolbar()
@@ -189,7 +186,7 @@ val Drawer = FC<Props> {
             ListItemButton {
               onClick = {
                 modalState = modalState.closeDrawer()
-                appState = AppState.Solving(inputLetters)
+                appState = appState.solve(inputLetters)
               }
               ListItemText {
                 +inputLetters
