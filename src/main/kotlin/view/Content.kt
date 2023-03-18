@@ -35,7 +35,7 @@ val Content = FC<Props> {
         val result = Solver(dictionary, configuration.strategy).solve(inputLetters)
         if (result != null) {
           solveHistory = solveHistory - inputLetters + inputLetters
-          console.log("Found solution:\n${result.show()}")
+          console.log("Found solution:\n${result.showAsMarkDown()}\n")
           navigator.clipboard.writeText(result.show())
         }
         appState = appState.showResult(result)

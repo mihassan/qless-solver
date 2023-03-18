@@ -37,6 +37,20 @@ data class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
     }.joinToString("")
   }
 
+  inline fun showAsMarkDown(): String {
+    val lines = show().lines().map { it.map { " $it " } }
+    val firstLine = lines[0]
+    val restOfTheLines = lines.drop(1)
+    val markdownRows = buildList {
+      add(firstLine)
+      add(firstLine.map { "---" })
+      addAll(restOfTheLines)
+    }
+    return markdownRows.joinToString("\n") {
+      it.joinToString("|", "|", "|")
+    }
+  }
+
   inline fun lines(): List<String> = show().lines()
 
   inline fun grid(): List<List<String>> = lines().map { it.map { "$it" } }
