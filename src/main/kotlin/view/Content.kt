@@ -62,7 +62,7 @@ val Content = FC<Props> {
         }
         is AppState.ShowingResult -> {
           Grid {
-            letters = (appState as AppState.ShowingResult).board.grid()
+            board = (appState as AppState.ShowingResult).board
           }
         }
         is AppState.NoSolutionFound -> {

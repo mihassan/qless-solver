@@ -2,8 +2,8 @@ package model
 
 import util.Bag
 import util.frequency
+import util.groupContiguousBy
 import util.transpose
-import util.words
 
 enum class Direction {
   Horizontal,
@@ -17,19 +17,38 @@ data class Point(val x: Int, val y: Int) {
   }
 }
 
+data class PlacedWord(val word: String, val position: Point, val direction: Direction) {
+  val cells: List<Point> = when (direction) {
+    Direction.Horizontal -> word.indices.map { Point(position.x + it, position.y) }
+    Direction.Vertical -> word.indices.map { Point(position.x, position.y + it) }
+  }
+}
+
 @Suppress("NOTHING_TO_INLINE")
 data class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
   inline fun clone(): Board = Board(cells.toMutableMap())
 
-  inline fun isEmpty(): Boolean = cells.isEmpty()
-
   inline fun letters(): Bag<Char> = cells.values.toList().frequency()
 
-  inline fun xRange(): IntRange =
-    if (isEmpty()) (0..0) else cells.keys.map(Point::x).run { min()..max() }
+  inline fun topLeft(): Point =
+    Point(
+      cells.keys.minOfOrNull(Point::x) ?: 0,
+      cells.keys.minOfOrNull(Point::y) ?: 0
+    )
 
-  inline fun yRange(): IntRange =
-    if (isEmpty()) (0..0) else cells.keys.map(Point::y).run { min()..max() }
+  inline fun bottomRight(): Point =
+    Point(
+      cells.keys.maxOfOrNull(Point::x) ?: 0,
+      cells.keys.maxOfOrNull(Point::y) ?: 0
+    )
+
+  inline fun rowCount(): Int = bottomRight().y - topLeft().y + 1
+
+  inline fun columnCount(): Int = bottomRight().x - topLeft().x + 1
+
+  inline fun xRange(): IntRange = topLeft().x..bottomRight().x
+
+  inline fun yRange(): IntRange = topLeft().y..bottomRight().y
 
   inline fun show(): String = yRange().joinToString("\n") { y ->
     xRange().map { x ->
@@ -38,7 +57,7 @@ data class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
   }
 
   inline fun showAsMarkDown(): String {
-    val lines = show().lines().map { it.map { " $it " } }
+    val lines = lines().map { it.map { " $it " } }
     val firstLine = lines[0]
     val restOfTheLines = lines.drop(1)
     val markdownRows = buildList {
@@ -53,11 +72,42 @@ data class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
 
   inline fun lines(): List<String> = show().lines()
 
-  inline fun grid(): List<List<String>> = lines().map { it.map { "$it" } }
-
   inline fun columns(): List<String> = lines().transpose()
 
-  inline fun words(): List<String> = (lines() + columns()).flatMap(String::words)
+  inline fun grid(): List<List<String>> = lines().map { it.map { "$it" } }
+
+  fun words(minWordLength: Int): List<PlacedWord> {
+    val topLeftX = topLeft().x
+    val topLeftY = topLeft().y
+
+    fun String.wordsWithIndex(): List<Pair<String, Int>> =
+      withIndex()
+        .toList()
+        .groupContiguousBy { (_, c) -> c == ' ' }
+        .filter { it.size >= minWordLength && it.first().value != ' ' }
+        .map {
+          val word = it.map { (_, c) -> c }.joinToString("")
+          val idx = it.first().index
+          word to idx
+        }
+
+    fun String.wordsInRow(rowIndex: Int): List<PlacedWord> =
+      wordsWithIndex()
+        .map { (word, idx) ->
+          PlacedWord(word, Point(topLeftX + idx, topLeftY + rowIndex), Direction.Horizontal)
+        }
+
+    fun String.wordsInColumn(columnIndex: Int): List<PlacedWord> =
+      wordsWithIndex()
+        .map { (word, idx) ->
+          PlacedWord(word, Point(topLeftX + columnIndex, topLeftY + idx), Direction.Vertical)
+        }
+
+    return buildList {
+      lines().forEachIndexed { rowIndex, row -> addAll(row.wordsInRow(rowIndex)) }
+      columns().forEachIndexed { columnIndex, column -> addAll(column.wordsInColumn(columnIndex)) }
+    }
+  }
 
   inline fun clearCells(cellsToRemove: Iterable<Point>) = cellsToRemove.forEach { cells.remove(it) }
 
@@ -94,5 +144,11 @@ data class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
     bagOfInputLetters == letters()
 
   inline fun allWordsAreValid(dictionary: Dictionary): Boolean =
-    words().filter { it.length >= 2 }.all { it in dictionary }
+    words(2).all { it.word in dictionary }
+
+  inline fun getConnectedCells(point: Point, minWordLength: Int): Set<Point> =
+    words(minWordLength)
+      .filter { point in it.cells }
+      .flatMap { it.cells }
+      .toSet()
 }
