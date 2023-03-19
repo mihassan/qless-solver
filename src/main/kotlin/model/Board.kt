@@ -151,4 +151,10 @@ data class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
       .filter { point in it.cells }
       .flatMap { it.cells }
       .toSet()
+
+  inline fun getConnectedWords(point: Point, minWordLength: Int): Set<String> =
+    words(minWordLength)
+      .filter { point in it.cells }
+      .map { it.word }
+      .toSet()
 }

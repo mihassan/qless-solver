@@ -10,6 +10,7 @@ import csstype.UserSelect
 import csstype.fr
 import csstype.px
 import csstype.vmin
+import model.AppState.Companion.solve
 import model.Board
 import model.Point
 import mui.material.Grid
@@ -17,6 +18,7 @@ import mui.material.Paper
 import mui.system.sx
 import react.FC
 import react.Props
+import react.useContext
 import react.useState
 
 external interface GridProps : Props {
@@ -24,7 +26,10 @@ external interface GridProps : Props {
 }
 
 val Grid = FC<GridProps> { props ->
+  var appState by useContext(AppStateContext)
+  var bannedWords by useContext(BannedWordsContext)
   var highlightedCells by useState<Set<Point>>(emptySet())
+  var highlightedWords by useState<Set<String>>(emptySet())
 
   Grid {
     sx {
@@ -33,6 +38,7 @@ val Grid = FC<GridProps> { props ->
       gridTemplateRows = csstype.repeat(props.board.rowCount(), 1.fr)
       gridTemplateColumns = csstype.repeat(props.board.columnCount(), 1.fr)
     }
+    tabIndex = 0
     props.board.yRange().forEach { y ->
       props.board.xRange().forEach { x ->
         val currentCell = Point(x, y)
@@ -72,6 +78,7 @@ val Grid = FC<GridProps> { props ->
           square = true
           onMouseEnter = {
             highlightedCells = props.board.getConnectedCells(currentCell, 3)
+            highlightedWords = props.board.getConnectedWords(currentCell, 3)
           }
           +"${letter ?: ' '}"
         }
@@ -79,6 +86,12 @@ val Grid = FC<GridProps> { props ->
     }
     onMouseLeave = {
       highlightedCells = emptySet()
+    }
+    onKeyDown = { event ->
+      if (event.key == "Delete" || event.key == "Backspace") {
+        bannedWords = bannedWords + highlightedWords
+        appState = appState.solve()
+      }
     }
   }
 }

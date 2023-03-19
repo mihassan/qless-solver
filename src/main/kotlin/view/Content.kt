@@ -25,6 +25,7 @@ val Content = FC<Props> {
   val configuration by useContext(ConfigurationContext)
   val dictionary by useContext(DictionaryContext)
   var solveHistory by useContext(SolveHistoryContext)
+  val bannedWords by useContext(BannedWordsContext)
 
   useEffect(appState) {
     (appState as? AppState.Solving)?.inputLetters?.let { inputLetters ->
@@ -32,7 +33,7 @@ val Content = FC<Props> {
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
         delay(50)
-        val result = Solver(dictionary, configuration.strategy).solve(inputLetters)
+        val result = Solver(dictionary, configuration.strategy, bannedWords).solve(inputLetters)
         if (result != null) {
           solveHistory = solveHistory - inputLetters + inputLetters
           console.log("Found solution:\n${result.showAsMarkDown()}\n")

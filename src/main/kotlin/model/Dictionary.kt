@@ -20,10 +20,9 @@ data class Dictionary private constructor(
 
   operator fun contains(word: String): Boolean = word in words
 
-  private fun updateEntries(fn: Set<Word>.() -> List<Word>): Dictionary =
-    with(fn(entries)) {
-      Dictionary(map { it.letters }.toSet(), toSet())
-    }
+  private fun updateEntries(fn: Set<Word>.() -> List<Word>): Dictionary = with(fn(entries)) {
+    Dictionary(map { it.letters }.toSet(), toSet())
+  }
 
   fun sortAlphabeticOrder(): Dictionary = updateEntries { sortedBy { it.letters } }
 
@@ -33,9 +32,10 @@ data class Dictionary private constructor(
 
   fun shuffle(): Dictionary = updateEntries { shuffled() }
 
-  fun prune(bagOfLetters: Bag<Char>): Dictionary {
-    val prunedEntries =
-      entries.filter { it.canConstructFrom(bagOfLetters) && it.letters.length >= 3 }
+  fun prune(bagOfLetters: Bag<Char>, bannedWords: Set<String>): Dictionary {
+    val prunedEntries = entries.filter {
+      it.canConstructFrom(bagOfLetters) && it.letters !in bannedWords && it.letters.length >= 3
+    }
     return Dictionary(prunedEntries.map { it.letters }.toSet(), prunedEntries.toSet())
   }
 
@@ -49,7 +49,6 @@ data class Dictionary private constructor(
       return Dictionary(entries.map { it.letters }.toSet(), entries.toSet())
     }
 
-    fun of(dictionary: String): Dictionary =
-      of(dictionary.lines().filterNot { SPACE in it })
+    fun of(dictionary: String): Dictionary = of(dictionary.lines().filterNot { SPACE in it })
   }
 }

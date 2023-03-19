@@ -11,10 +11,14 @@ enum class Strategy(val display: String) {
   RandomOrder("Random order")
 }
 
-class Solver(private val dictionary: Dictionary, private val strategy: Strategy) {
+class Solver(
+  private val dictionary: Dictionary,
+  private val strategy: Strategy,
+  private val bannedWords: Set<String>,
+) {
   fun solve(inputLetters: String): Board? {
     val bagOfInputLetters = inputLetters.filter(Char::isLetter).map(Char::uppercaseChar).frequency()
-    val dictionary = with(dictionary.prune(bagOfInputLetters)) {
+    val dictionary = with(dictionary.prune(bagOfInputLetters, bannedWords)) {
       when (strategy) {
         Strategy.AlphabeticOrder -> sortAlphabeticOrder()
         Strategy.ShortestFirst -> sortShortestFirst()
@@ -30,7 +34,7 @@ class Solver(private val dictionary: Dictionary, private val strategy: Strategy)
     fun pruneDictionary(bagOfLetters: Bag<Char>): Dictionary =
       prunedDictionaryCache
         .getOrPut(bagOfLetters) {
-          dictionary.prune(bagOfLetters)
+          dictionary.prune(bagOfLetters, bannedWords)
         }
 
     inline fun allowedLetters(depth: Int, requiredLetter: Char) = when (depth) {

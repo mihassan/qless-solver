@@ -46,6 +46,7 @@ val Drawer = FC<Props> {
   var configuration by useContext(ConfigurationContext)
   var dictionary by useContext(DictionaryContext)
   var solveHistory by useContext(SolveHistoryContext)
+  var bannedWords by useContext(BannedWordsContext)
 
   useEffectOnce {
     var (dictionaryType, dictionarySize, strategy) = configuration
@@ -94,6 +95,19 @@ val Drawer = FC<Props> {
 
   useEffect(solveHistory) {
     window.localStorage.setItem("solveHistory", solveHistory.joinToString())
+  }
+
+  useEffectOnce {
+    window.localStorage.getItem("bannedWords")?.let {
+      bannedWords = it
+        .split(", ")
+        .filter(String::isNotBlank)
+        .toSet()
+    }
+  }
+
+  useEffect(bannedWords) {
+    window.localStorage.setItem("bannedWords", bannedWords.joinToString())
   }
 
   SwipeableDrawer {
@@ -201,6 +215,41 @@ val Drawer = FC<Props> {
                   color = Color("error.main")
                 }
                 +"Clear History"
+              }
+            }
+          }
+        }
+      }
+      if (bannedWords.isNotEmpty()) {
+        Divider {}
+        List {
+          subheader = ListSubheader.create {
+            +"Banned words"
+          }
+          bannedWords.forEach { word ->
+            ListItemButton {
+              onClick = {
+                bannedWords = bannedWords - word
+                modalState = modalState.closeDrawer()
+                appState = appState.solve()
+              }
+              ListItemText {
+                +word
+              }
+            }
+          }
+          ListItemButton {
+            onClick = {
+              bannedWords = emptySet()
+              modalState = modalState.closeDrawer()
+              appState = appState.solve()
+            }
+            ListItemText {
+              Typography {
+                sx {
+                  color = Color("error.main")
+                }
+                +"Clear Banned Words"
               }
             }
           }

@@ -25,6 +25,8 @@ var DictionaryContext = createContext<StateInstance<Dictionary>>()
 
 var SolveHistoryContext = createContext<StateInstance<Set<String>>>()
 
+var BannedWordsContext = createContext<StateInstance<Set<String>>>()
+
 val BaseModule = FC<PropsWithChildren> { props ->
   val themeState: StateInstance<Theme> = useState { Themes.Light }
   val (theme: Theme) = themeState
@@ -32,7 +34,8 @@ val BaseModule = FC<PropsWithChildren> { props ->
   val modalState: StateInstance<ModalState> = useState { ModalState.NONE }
   val configuration: StateInstance<Configuration> = useState { Configuration.Default }
   val dictionary: StateInstance<Dictionary> = useState { Dictionary.of("") }
-  val solveHistory: StateInstance<Set<String>> = useState { emptySet<String>() }
+  val solveHistory: StateInstance<Set<String>> = useState { emptySet() }
+  val bannedWords: StateInstance<Set<String>> = useState { emptySet() }
 
   ThemeContext(themeState) {
     AppStateContext(appState) {
@@ -40,10 +43,12 @@ val BaseModule = FC<PropsWithChildren> { props ->
         ConfigurationContext(configuration) {
           DictionaryContext(dictionary) {
             SolveHistoryContext(solveHistory) {
-              ThemeProvider {
-                this.theme = theme
-                CssBaseline()
-                +props.children
+              BannedWordsContext(bannedWords) {
+                ThemeProvider {
+                  this.theme = theme
+                  CssBaseline()
+                  +props.children
+                }
               }
             }
           }
