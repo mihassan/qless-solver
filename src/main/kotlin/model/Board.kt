@@ -3,6 +3,7 @@ package model
 import util.Bag
 import util.frequency
 import util.groupContiguousBy
+import util.isDistinct
 import util.transpose
 
 enum class Direction {
@@ -137,14 +138,26 @@ data class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
       startCell.moveBy(dir, idx) !in cells
     }
 
-  inline fun isValid(dictionary: Dictionary, bagOfInputLetters: Bag<Char>): Boolean =
-    allWordsAreValid(dictionary) && allLettersUsedExactlyOnce(bagOfInputLetters)
+  inline fun isValid(
+    dictionary: Dictionary,
+    bagOfInputLetters: Bag<Char>,
+    allowTouchingWords: Boolean,
+    allowDuplicateWords: Boolean,
+  ): Boolean =
+    allWordsAreValid(dictionary)
+      && allLettersUsedExactlyOnce(bagOfInputLetters)
+      && (allowTouchingWords || noTouchingWords())
+      && (allowDuplicateWords || noDuplicateWords())
 
   inline fun allLettersUsedExactlyOnce(bagOfInputLetters: Bag<Char>): Boolean =
     bagOfInputLetters == letters()
 
   inline fun allWordsAreValid(dictionary: Dictionary): Boolean =
-    words(2).all { it.word in dictionary }
+    words(3).all { it.word in dictionary }
+
+  inline fun noTouchingWords(): Boolean = words(2).none { it.word.length == 2 }
+
+  inline fun noDuplicateWords(): Boolean = words(3).map { it.word }.isDistinct()
 
   inline fun getConnectedCells(point: Point, minWordLength: Int): Set<Point> =
     words(minWordLength)

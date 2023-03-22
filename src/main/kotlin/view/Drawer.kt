@@ -13,9 +13,11 @@ import model.AppState.Companion.loadDictionary
 import model.AppState.Companion.solve
 import model.Configuration
 import model.ModalState
+import mui.material.Checkbox
 import mui.material.Divider
 import mui.material.DrawerAnchor.left
 import mui.material.FormControl
+import mui.material.FormControlLabel
 import mui.material.FormControlVariant
 import mui.material.InputLabel
 import mui.material.List
@@ -32,6 +34,7 @@ import mui.system.Box
 import mui.system.sx
 import react.FC
 import react.Props
+import react.ReactNode
 import react.create
 import react.useContext
 import react.useEffect
@@ -49,7 +52,7 @@ val Drawer = FC<Props> {
   var bannedWords by useContext(BannedWordsContext)
 
   useEffectOnce {
-    var (dictionaryType, dictionarySize, strategy) = configuration
+    var (dictionaryType, dictionarySize, strategy, allowTouchingWords, allowDuplicateWords) = configuration
     window.localStorage.getItem("dictionaryType")?.let {
       dictionaryType = DictionaryType.valueOf(it)
     }
@@ -59,7 +62,22 @@ val Drawer = FC<Props> {
     window.localStorage.getItem("strategy")?.let {
       strategy = Strategy.valueOf(it)
     }
-    configuration = Configuration(dictionaryType, dictionarySize, strategy)
+    window.localStorage.getItem("strategy")?.let {
+      strategy = Strategy.valueOf(it)
+    }
+    window.localStorage.getItem("allowTouchingWords")?.let {
+      allowTouchingWords = it.toBoolean()
+    }
+    window.localStorage.getItem("allowDuplicateWords")?.let {
+      allowDuplicateWords = it.toBoolean()
+    }
+    configuration = Configuration(
+      dictionaryType,
+      dictionarySize,
+      strategy,
+      allowTouchingWords,
+      allowDuplicateWords
+    )
   }
 
   useEffect(configuration.dictionaryType, configuration.dictionarySize) {
@@ -76,8 +94,14 @@ val Drawer = FC<Props> {
     }
   }
 
-  useEffect(configuration.strategy) {
+  useEffect(
+    configuration.strategy,
+    configuration.allowTouchingWords,
+    configuration.allowDuplicateWords
+  ) {
     window.localStorage.setItem("strategy", configuration.strategy.name)
+    window.localStorage.setItem("allowTouchingWords", configuration.allowTouchingWords.toString())
+    window.localStorage.setItem("allowDuplicateWords", configuration.allowDuplicateWords.toString())
 
     modalState = modalState.closeDrawer()
     appState = appState.solve()
@@ -122,7 +146,7 @@ val Drawer = FC<Props> {
           FormControl {
             variant = FormControlVariant.standard
             sx {
-              minWidth = 10.rem
+              minWidth = 12.rem
             }
             InputLabel {
               +"Dictionary type"
@@ -146,7 +170,7 @@ val Drawer = FC<Props> {
           FormControl {
             variant = FormControlVariant.standard
             sx {
-              minWidth = 10.rem
+              minWidth = 12.rem
             }
             InputLabel {
               +"Dictionary size"
@@ -170,7 +194,7 @@ val Drawer = FC<Props> {
           FormControl {
             variant = FormControlVariant.standard
             sx {
-              minWidth = 10.rem
+              minWidth = 12.rem
             }
             InputLabel {
               +"Solving strategy"
@@ -189,68 +213,90 @@ val Drawer = FC<Props> {
             }
           }
         }
-      }
-      if (solveHistory.isNotEmpty()) {
-        Divider {}
-        List {
-          subheader = ListSubheader.create {
-            +"History"
-          }
-          solveHistory.reversed().forEach { inputLetters ->
-            ListItemButton {
-              onClick = {
-                modalState = modalState.closeDrawer()
-                appState = appState.solve(inputLetters)
-              }
-              ListItemText {
-                +inputLetters
-              }
-            }
-          }
-          ListItemButton {
-            onClick = { solveHistory = emptySet() }
-            ListItemText {
-              Typography {
-                sx {
-                  color = Color("error.main")
-                }
-                +"Clear History"
+        ListItem {
+          FormControlLabel {
+            label = ReactNode("Allow touching words")
+            control = Checkbox.create {
+              checked = configuration.allowTouchingWords
+              onChange = { event, _ ->
+                configuration = configuration.copy(allowTouchingWords = event.target.checked)
               }
             }
           }
         }
       }
-      if (bannedWords.isNotEmpty()) {
-        Divider {}
-        List {
-          subheader = ListSubheader.create {
-            +"Banned words"
-          }
-          bannedWords.forEach { word ->
-            ListItemButton {
-              onClick = {
-                bannedWords = bannedWords - word
-                modalState = modalState.closeDrawer()
-                appState = appState.solve()
-              }
-              ListItemText {
-                +word
-              }
+      ListItem {
+        FormControlLabel {
+          label = ReactNode("Allow duplicate words")
+          control = Checkbox.create {
+            checked = configuration.allowDuplicateWords
+            onChange = { event, _ ->
+              configuration = configuration.copy(allowDuplicateWords = event.target.checked)
             }
           }
+        }
+      }
+    }
+    if (solveHistory.isNotEmpty()) {
+      Divider {}
+      List {
+        subheader = ListSubheader.create {
+          +"History"
+        }
+        solveHistory.reversed().forEach { inputLetters ->
           ListItemButton {
             onClick = {
-              bannedWords = emptySet()
+              modalState = modalState.closeDrawer()
+              appState = appState.solve(inputLetters)
+            }
+            ListItemText {
+              +inputLetters
+            }
+          }
+        }
+        ListItemButton {
+          onClick = { solveHistory = emptySet() }
+          ListItemText {
+            Typography {
+              sx {
+                color = Color("error.main")
+              }
+              +"Clear History"
+            }
+          }
+        }
+      }
+    }
+    if (bannedWords.isNotEmpty()) {
+      Divider {}
+      List {
+        subheader = ListSubheader.create {
+          +"Banned words"
+        }
+        bannedWords.forEach { word ->
+          ListItemButton {
+            onClick = {
+              bannedWords = bannedWords - word
               modalState = modalState.closeDrawer()
               appState = appState.solve()
             }
             ListItemText {
-              Typography {
-                sx {
-                  color = Color("error.main")
-                }
-                +"Clear Banned Words"
+              +word
+            }
+          }
+        }
+        ListItemButton {
+          onClick = {
+            bannedWords = emptySet()
+            modalState = modalState.closeDrawer()
+            appState = appState.solve()
+          }
+          ListItemText {
+            Typography {
+              sx {
+                color = Color("error.main")
               }
+              +"Clear Banned Words"
             }
           }
         }

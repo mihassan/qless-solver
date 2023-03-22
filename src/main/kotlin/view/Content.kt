@@ -33,7 +33,7 @@ val Content = FC<Props> {
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
         delay(50)
-        val result = Solver(dictionary, configuration.strategy, bannedWords).solve(inputLetters)
+        val result = Solver(dictionary, configuration, bannedWords).solve(inputLetters)
         if (result != null) {
           solveHistory = solveHistory - inputLetters + inputLetters
           console.log("Found solution:\n${result.showAsMarkDown()}\n")

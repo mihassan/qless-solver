@@ -13,13 +13,13 @@ enum class Strategy(val display: String) {
 
 class Solver(
   private val dictionary: Dictionary,
-  private val strategy: Strategy,
+  private val configuration: Configuration,
   private val bannedWords: Set<String>,
 ) {
   fun solve(inputLetters: String): Board? {
     val bagOfInputLetters = inputLetters.filter(Char::isLetter).map(Char::uppercaseChar).frequency()
     val dictionary = with(dictionary.prune(bagOfInputLetters, bannedWords)) {
-      when (strategy) {
+      when (configuration.strategy) {
         Strategy.AlphabeticOrder -> sortAlphabeticOrder()
         Strategy.ShortestFirst -> sortShortestFirst()
         Strategy.LongestFirst -> sortLongestFirst()
@@ -47,7 +47,13 @@ class Solver(
 
     fun solveInternal(depth: Int): Board? =
       if (board.allLettersUsedExactlyOnce(bagOfInputLetters)) {
-        if (board.isValid(dictionary, bagOfInputLetters)) {
+        if (board.isValid(
+            dictionary,
+            bagOfInputLetters,
+            configuration.allowTouchingWords,
+            configuration.allowDuplicateWords
+          )
+        ) {
           console.log("Words used: ${words.joinToString(", ")}")
           board.clone()
         } else {

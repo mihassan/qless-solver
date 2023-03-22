@@ -6,6 +6,8 @@ inline fun <T> List<T>.frequency(): Bag<T> = Bag.of(groupingBy { it }.eachCount(
 inline fun CharArray.frequency(): Bag<Char> = toList().frequency()
 inline fun String.frequency(): Bag<Char> = toCharArray().frequency()
 
+inline fun <T> List<T>.isDistinct(): Boolean = size == distinct().size
+
 inline fun <T> List<List<T>>.transpose(): List<List<T>> {
   val rowCount = size
   val colCount = first().size
