@@ -32,6 +32,7 @@ solution grid showing all the words that can be made using the given letters.
 - CSS
 - [Kotlin-js](https://kotlinlang.org/docs/js-overview.html)
 - [React](https://reactjs.org/)
+- [Material UI](https://mui.com/)
 
 ## Contributing
 
@@ -55,18 +56,10 @@ areas where you can contribute:
    both desktop and mobile platforms will make the game more enjoyable to play.
 
 4. **Support dynamically loading arbitrary dictionary:** Currently, the solver
-   uses a fixed dictionary. Adding the ability to dynamically load dictionaries
-   would make the game more versatile.
+   uses a fixed set of dictionaries. Adding the ability to dynamically load 
+   dictionaries would make the game more versatile.
 
-5. **Maintain a history of solutions:** Adding a feature to maintain a history
-   of previous solutions would enable users to go back and review their past
-   games.
-
-6. **Allow users to ban certain words:** Providing an option for users to ban
-   certain words that they find offensive or inappropriate would make the game
-   more inclusive.
-
-7. **Use React Router to provide input letters via URL:** Adding a feature to
+5. **Use React Router to provide input letters via URL:** Adding a feature to
    allow users to input letters via URL would make it easier to share and play
    custom game configurations.
 
