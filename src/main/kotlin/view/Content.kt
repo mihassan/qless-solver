@@ -17,7 +17,6 @@ import react.FC
 import react.Props
 import react.useContext
 import react.useEffect
-import web.navigator.navigator
 
 val Content = FC<Props> {
   val mainScope = MainScope()
@@ -36,8 +35,7 @@ val Content = FC<Props> {
         val result = Solver(dictionary, configuration, bannedWords).solve(inputLetters)
         if (result != null) {
           solveHistory = solveHistory - inputLetters + inputLetters
-          console.log("Found solution:\n${result.showAsMarkDown()}\n")
-          navigator.clipboard.writeText(result.show())
+          console.log("Found solution:\n${result.show()}\n")
         }
         appState = appState.showResult(result)
       }

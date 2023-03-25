@@ -10,16 +10,22 @@ import csstype.UserSelect
 import csstype.fr
 import csstype.px
 import csstype.vmin
+import js.core.jso
 import model.AppState.Companion.solve
 import model.Board
 import model.Point
+import mui.material.Divider
 import mui.material.Grid
+import mui.material.Menu
+import mui.material.MenuItem
 import mui.material.Paper
+import mui.material.PopoverReference
 import mui.system.sx
 import react.FC
 import react.Props
 import react.useContext
 import react.useState
+import web.navigator.navigator
 
 external interface GridProps : Props {
   var board: Board
@@ -30,6 +36,7 @@ val Grid = FC<GridProps> { props ->
   var bannedWords by useContext(BannedWordsContext)
   var highlightedCells by useState<Set<Point>>(emptySet())
   var highlightedWords by useState<Set<String>>(emptySet())
+  var contextMenu by useState<Pair<Double, Double>>()
 
   Grid {
     sx {
@@ -84,14 +91,50 @@ val Grid = FC<GridProps> { props ->
         }
       }
     }
+    Menu {
+      open = contextMenu != null
+      onClose = { contextMenu = null }
+      anchorReference = PopoverReference.anchorPosition
+      anchorPosition = contextMenu?.let {
+        jso {
+          top = contextMenu!!.second
+          left = contextMenu!!.first
+        }
+      }
+      MenuItem {
+        onClick = {
+          navigator.clipboard.writeText(props.board.show())
+          contextMenu = null
+        }
+        +"Copy"
+      }
+      MenuItem {
+        onClick = {
+          navigator.clipboard.writeText(props.board.showAsMarkDown())
+          contextMenu = null
+        }
+        +"Copy as MarkDown"
+      }
+      if (highlightedWords.isNotEmpty()) {
+        Divider {}
+        highlightedWords.forEach { word ->
+          MenuItem {
+            onClick = {
+              bannedWords = bannedWords + setOf(word)
+              contextMenu = null
+              appState = appState.solve()
+            }
+            +"Ban word: $word"
+          }
+        }
+      }
+    }
     onMouseLeave = {
       highlightedCells = emptySet()
     }
-    onKeyDown = { event ->
-      if (event.key == "Delete" || event.key == "Backspace") {
-        bannedWords = bannedWords + highlightedWords
-        appState = appState.solve()
-      }
+    onContextMenu = { event ->
+      event.preventDefault()
+      if (contextMenu == null) contextMenu = event.clientX to event.clientY
     }
   }
 }
