@@ -14,8 +14,13 @@ import js.core.jso
 import model.AppState.Companion.solve
 import model.Board
 import model.Point
+import mui.icons.material.Block
+import mui.icons.material.ContentCopy
+import mui.icons.material.TableView
 import mui.material.Divider
 import mui.material.Grid
+import mui.material.ListItemIcon
+import mui.material.ListItemText
 import mui.material.Menu
 import mui.material.MenuItem
 import mui.material.Paper
@@ -106,14 +111,24 @@ val Grid = FC<GridProps> { props ->
           navigator.clipboard.writeText(props.board.show())
           contextMenu = null
         }
-        +"Copy"
+        ListItemIcon {
+          ContentCopy {}
+        }
+        ListItemText {
+          +"Copy"
+        }
       }
       MenuItem {
         onClick = {
           navigator.clipboard.writeText(props.board.showAsMarkDown())
           contextMenu = null
         }
-        +"Copy as MarkDown"
+        ListItemIcon {
+          TableView {}
+        }
+        ListItemText {
+          +"Copy as MarkDown"
+        }
       }
       if (highlightedWords.isNotEmpty()) {
         Divider {}
@@ -124,7 +139,12 @@ val Grid = FC<GridProps> { props ->
               contextMenu = null
               appState = appState.solve()
             }
-            +"Ban word: $word"
+            ListItemIcon {
+              Block {}
+            }
+            ListItemText {
+              +"Ban word: $word"
+            }
           }
         }
       }
