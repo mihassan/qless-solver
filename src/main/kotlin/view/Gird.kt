@@ -1,5 +1,6 @@
 package view
 
+import controller.WordDefinitions
 import csstype.AlignItems
 import csstype.Color
 import csstype.Display
@@ -11,12 +12,16 @@ import csstype.fr
 import csstype.px
 import csstype.vmin
 import js.core.jso
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import model.AppState.Companion.solve
 import model.Board
 import model.Point
 import mui.icons.material.Block
 import mui.icons.material.ContentCopy
 import mui.icons.material.TableView
+import mui.material.Card
+import mui.material.CardContent
 import mui.material.Divider
 import mui.material.Grid
 import mui.material.ListItemIcon
@@ -25,11 +30,18 @@ import mui.material.Menu
 import mui.material.MenuItem
 import mui.material.Paper
 import mui.material.PopoverReference
+import mui.material.Popper
+import mui.material.Stack
+import mui.material.Typography
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.FC
 import react.Props
+import react.dom.html.ReactHTML
 import react.useContext
+import react.useEffectOnce
 import react.useState
+import web.dom.Element
 import web.navigator.navigator
 
 external interface GridProps : Props {
@@ -37,11 +49,25 @@ external interface GridProps : Props {
 }
 
 val Grid = FC<GridProps> { props ->
+  val mainScope = MainScope()
   var appState by useContext(AppStateContext)
+  var definitions by useState<Map<String, String>>(emptyMap())
   var bannedWords by useContext(BannedWordsContext)
   var highlightedCells by useState<Set<Point>>(emptySet())
   var highlightedWords by useState<Set<String>>(emptySet())
-  var contextMenu by useState<Pair<Double, Double>>()
+  var contextMenuPos by useState<Pair<Double, Double>>()
+  var definitionDialogEl by useState<Element>()
+
+  useEffectOnce {
+    mainScope.launch {
+      definitions = props.board.words(3).mapNotNull { placedWord ->
+        WordDefinitions.fetch(placedWord.word)?.let { definition ->
+          placedWord.word to definition
+        }
+      }.toMap()
+    }
+  }
+
 
   Grid {
     sx {
@@ -51,6 +77,16 @@ val Grid = FC<GridProps> { props ->
       gridTemplateColumns = csstype.repeat(props.board.columnCount(), 1.fr)
     }
     tabIndex = 0
+
+    onMouseLeave = {
+      highlightedCells = emptySet()
+      definitionDialogEl = null
+    }
+    onContextMenu = { event ->
+      event.preventDefault()
+      if (contextMenuPos == null) contextMenuPos = event.clientX to event.clientY
+    }
+
     props.board.yRange().forEach { y ->
       props.board.xRange().forEach { x ->
         val currentCell = Point(x, y)
@@ -88,28 +124,61 @@ val Grid = FC<GridProps> { props ->
               else -> 6
             }
           square = true
-          onMouseEnter = {
+          onMouseEnter = { event ->
             highlightedCells = props.board.getConnectedCells(currentCell, 3)
             highlightedWords = props.board.getConnectedWords(currentCell, 3)
+            definitionDialogEl = event.currentTarget.takeIf { letter != null }
           }
           +"${letter ?: ' '}"
         }
       }
     }
+
+    Popper {
+      open = definitionDialogEl != null && highlightedWords.isNotEmpty()
+      anchorEl = definitionDialogEl
+      Stack {
+        sx {
+          maxWidth = 360.px
+          gap = 8.px
+        }
+        highlightedWords.forEach { word ->
+          Card {
+            CardContent {
+              Typography {
+                gutterBottom = true
+                variant = TypographyVariant.h5
+                component = ReactHTML.div
+                +word
+              }
+              Typography {
+                sx {
+                  color =
+                    if (word in definitions) Color("text.secondary") else Color("primary.error")
+                }
+                variant = TypographyVariant.body2
+                +(definitions[word] ?: "Could not load definition.")
+              }
+            }
+          }
+        }
+      }
+    }
+
     Menu {
       open = contextMenu != null
       onClose = { contextMenu = null }
       anchorReference = PopoverReference.anchorPosition
-      anchorPosition = contextMenu?.let {
+      anchorPosition = contextMenuPos?.let {
         jso {
-          top = contextMenu!!.second
-          left = contextMenu!!.first
+          top = it.second
+          left = it.first
         }
       }
       MenuItem {
         onClick = {
           navigator.clipboard.writeText(props.board.show())
-          contextMenu = null
+          contextMenuPos = null
         }
         ListItemIcon {
           ContentCopy {}
@@ -148,13 +217,6 @@ val Grid = FC<GridProps> { props ->
           }
         }
       }
-    }
-    onMouseLeave = {
-      highlightedCells = emptySet()
-    }
-    onContextMenu = { event ->
-      event.preventDefault()
-      if (contextMenu == null) contextMenu = event.clientX to event.clientY
     }
   }
 }

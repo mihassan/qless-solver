@@ -33,6 +33,7 @@ solution grid showing all the words that can be made using the given letters.
 - [Kotlin-js](https://kotlinlang.org/docs/js-overview.html)
 - [React](https://reactjs.org/)
 - [Material UI](https://mui.com/)
+- [Free Dictionary API](https://dictionaryapi.dev/)
 
 ## Contributing
 
