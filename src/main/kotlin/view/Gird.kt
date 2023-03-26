@@ -166,8 +166,8 @@ val Grid = FC<GridProps> { props ->
     }
 
     Menu {
-      open = contextMenu != null
-      onClose = { contextMenu = null }
+      open = contextMenuPos != null
+      onClose = { contextMenuPos = null }
       anchorReference = PopoverReference.anchorPosition
       anchorPosition = contextMenuPos?.let {
         jso {
@@ -190,7 +190,7 @@ val Grid = FC<GridProps> { props ->
       MenuItem {
         onClick = {
           navigator.clipboard.writeText(props.board.showAsMarkDown())
-          contextMenu = null
+          contextMenuPos = null
         }
         ListItemIcon {
           TableView {}
@@ -205,7 +205,7 @@ val Grid = FC<GridProps> { props ->
           MenuItem {
             onClick = {
               bannedWords = bannedWords + setOf(word)
-              contextMenu = null
+              contextMenuPos = null
               appState = appState.solve()
             }
             ListItemIcon {
