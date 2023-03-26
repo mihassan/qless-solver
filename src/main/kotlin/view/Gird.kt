@@ -154,7 +154,7 @@ val Grid = FC<GridProps> { props ->
               Typography {
                 sx {
                   color =
-                    if (word in definitions) Color("text.secondary") else Color("primary.error")
+                    if (word in definitions) Color("text.secondary") else Color("error.main")
                 }
                 variant = TypographyVariant.body2
                 +(definitions[word] ?: "Could not load definition.")

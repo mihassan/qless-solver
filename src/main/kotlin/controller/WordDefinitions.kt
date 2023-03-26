@@ -9,7 +9,9 @@ object WordDefinitions {
   suspend fun fetch(word: String): String? {
     val content = window.fetch(apiPath + word).await().text().await()
     // TODO(Better parsing of json response)
-    return content
+    return if ("No Definitions Found" in content)
+      null
+    else content
       .substringAfter("definition\":\"")
       .substringBefore("\"")
       .takeIf { it.isNotBlank() }
