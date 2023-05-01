@@ -2,11 +2,13 @@ package view
 
 import controller.Solver
 import csstype.AlignItems
+import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import model.AppState
 import model.AppState.Companion.showResult
+import model.Orientation
 import mui.material.Alert
 import mui.material.AlertColor
 import mui.material.Container
@@ -32,7 +34,12 @@ val Content = FC<Props> {
         // We use delay for render cycle to update the screen
         // before we start time-consuming solve starts.
         delay(50)
-        val result = Solver(dictionary, configuration, bannedWords).solve(inputLetters)
+        val orientation = if (window.innerHeight > window.innerWidth)
+          Orientation.Portrait
+        else
+          Orientation.Landscape
+        val result =
+          Solver(dictionary, configuration, bannedWords).solve(inputLetters)?.orient(orientation)
         if (result != null) {
           solveHistory = solveHistory - inputLetters + inputLetters
           console.log("Found solution:\n${result.show()}\n")

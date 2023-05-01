@@ -11,6 +11,11 @@ enum class Direction {
   Vertical
 }
 
+enum class Orientation {
+  Portrait,
+  Landscape
+}
+
 data class Point(val x: Int, val y: Int) {
   fun moveBy(dir: Direction, steps: Int): Point = when (dir) {
     Direction.Horizontal -> Point(x + steps, y)
@@ -28,6 +33,13 @@ data class PlacedWord(val word: String, val position: Point, val direction: Dire
 @Suppress("NOTHING_TO_INLINE")
 data class Board(val cells: MutableMap<Point, Char> = mutableMapOf()) {
   inline fun clone(): Board = Board(cells.toMutableMap())
+
+  inline fun transpose(): Board = Board(cells.mapKeys { Point(it.key.y, it.key.x) }.toMutableMap())
+
+  inline fun orient(orientation: Orientation): Board = when (orientation) {
+    Orientation.Portrait -> if (rowCount() < columnCount()) transpose() else this
+    Orientation.Landscape -> if (rowCount() > columnCount()) transpose() else this
+  }
 
   inline fun letters(): Bag<Char> = cells.values.toList().frequency()
 
