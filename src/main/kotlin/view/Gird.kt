@@ -53,6 +53,7 @@ val Grid = FC<GridProps> { props ->
   var appState by useContext(AppStateContext)
   var definitions by useState<Map<String, String>>(emptyMap())
   var bannedWords by useContext(BannedWordsContext)
+  val configuration by useContext(ConfigurationContext)
   var highlightedCells by useState<Set<Point>>(emptySet())
   var highlightedWords by useState<Set<String>>(emptySet())
   var contextMenuPos by useState<Pair<Double, Double>>()
@@ -135,7 +136,8 @@ val Grid = FC<GridProps> { props ->
     }
 
     Popper {
-      open = definitionDialogEl != null && highlightedWords.isNotEmpty()
+      open =
+        configuration.displayWordDefinitions && definitionDialogEl != null && highlightedWords.isNotEmpty()
       anchorEl = definitionDialogEl
       Stack {
         sx {

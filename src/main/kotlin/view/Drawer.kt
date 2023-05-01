@@ -52,7 +52,7 @@ val Drawer = FC<Props> {
   var bannedWords by useContext(BannedWordsContext)
 
   useEffectOnce {
-    var (dictionaryType, dictionarySize, strategy, allowTouchingWords, allowDuplicateWords) = configuration
+    var (dictionaryType, dictionarySize, strategy, allowTouchingWords, allowDuplicateWords, displayWordDefinitions) = configuration
     window.localStorage.getItem("dictionaryType")?.let {
       dictionaryType = DictionaryType.valueOf(it)
     }
@@ -71,12 +71,16 @@ val Drawer = FC<Props> {
     window.localStorage.getItem("allowDuplicateWords")?.let {
       allowDuplicateWords = it.toBoolean()
     }
+    window.localStorage.getItem("displayWordDefinitions")?.let {
+      displayWordDefinitions = it.toBoolean()
+    }
     configuration = Configuration(
       dictionaryType,
       dictionarySize,
       strategy,
       allowTouchingWords,
-      allowDuplicateWords
+      allowDuplicateWords,
+      displayWordDefinitions
     )
   }
 
@@ -97,11 +101,13 @@ val Drawer = FC<Props> {
   useEffect(
     configuration.strategy,
     configuration.allowTouchingWords,
-    configuration.allowDuplicateWords
+    configuration.allowDuplicateWords,
+    configuration.displayWordDefinitions
   ) {
     window.localStorage.setItem("strategy", configuration.strategy.name)
     window.localStorage.setItem("allowTouchingWords", configuration.allowTouchingWords.toString())
     window.localStorage.setItem("allowDuplicateWords", configuration.allowDuplicateWords.toString())
+    window.localStorage.setItem("displayWordDefinitions", configuration.displayWordDefinitions.toString())
 
     modalState = modalState.closeDrawer()
     appState = appState.solve()
@@ -232,6 +238,17 @@ val Drawer = FC<Props> {
             checked = configuration.allowDuplicateWords
             onChange = { event, _ ->
               configuration = configuration.copy(allowDuplicateWords = event.target.checked)
+            }
+          }
+        }
+      }
+      ListItem {
+        FormControlLabel {
+          label = ReactNode("Display word definitions")
+          control = Checkbox.create {
+            checked = configuration.displayWordDefinitions
+            onChange = { event, _ ->
+              configuration = configuration.copy(displayWordDefinitions = event.target.checked)
             }
           }
         }

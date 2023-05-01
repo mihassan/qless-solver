@@ -10,6 +10,7 @@ data class Configuration(
   val strategy: Strategy = Strategy.LongestFirst,
   val allowTouchingWords: Boolean = true,
   val allowDuplicateWords: Boolean = true,
+  val displayWordDefinitions: Boolean = true,
 ) {
   companion object {
     val Default = Configuration()
