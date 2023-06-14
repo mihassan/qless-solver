@@ -28,4 +28,3 @@ val Footer = FC<Props> {
     }
   }
 }
-

@@ -32,12 +32,7 @@ sealed class AppState(val displayText: String) {
         this
     }
 
-    fun AppState.solve(inputLetters: String): AppState = when (this) {
-      PageOpened -> this
-      LoadingDictionary -> this
-      is Solving -> this
-      else -> Solving(inputLetters)
-    }
+    fun AppState.solve(inputLetters: String): AppState = Solving(inputLetters)
 
     fun AppState.solve(): AppState = when (this) {
       PageOpened -> this

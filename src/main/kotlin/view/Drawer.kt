@@ -85,7 +85,9 @@ val Drawer = FC<Props> {
   }
 
   useEffect(configuration.dictionaryType, configuration.dictionarySize) {
+    val prevAppState = appState
     appState = appState.loadDictionary()
+
     mainScope.launch {
       dictionary =
         DictionaryLoader(configuration.dictionaryType, configuration.dictionarySize).load()
@@ -93,8 +95,8 @@ val Drawer = FC<Props> {
       window.localStorage.setItem("dictionaryType", configuration.dictionaryType.name)
       window.localStorage.setItem("dictionarySize", configuration.dictionarySize.name)
 
+      appState = prevAppState
       modalState = modalState.closeDrawer()
-      appState = appState.solve()
     }
   }
 
