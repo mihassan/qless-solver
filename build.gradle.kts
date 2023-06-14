@@ -20,7 +20,7 @@ dependencies {
 }
 
 kotlin {
-    js {
+    js(IR) {
         binaries.executable()
         browser {
             commonWebpackConfig {
