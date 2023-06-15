@@ -7,25 +7,26 @@ import model.ModalState
 import mui.material.CssBaseline
 import mui.material.styles.Theme
 import mui.material.styles.ThemeProvider
+import react.Context
 import react.FC
 import react.PropsWithChildren
 import react.StateInstance
 import react.createContext
 import react.useState
 
-val ThemeContext = createContext<StateInstance<Theme>>()
+val ThemeContext = createStateContext(Themes.Light)
 
-val AppStateContext = createContext<StateInstance<AppState>>()
+val AppStateContext = createStateContext<AppState>(AppState.PageOpened)
 
-val ModalStateContext = createContext<StateInstance<ModalState>>()
+val ModalStateContext = createStateContext(ModalState.NONE)
 
-val ConfigurationContext = createContext<StateInstance<Configuration>>()
+val ConfigurationContext = createStateContext(Configuration.Default)
 
-var DictionaryContext = createContext<StateInstance<Dictionary>>()
+var DictionaryContext = createStateContext(Dictionary.of(""))
 
-var SolveHistoryContext = createContext<StateInstance<Set<String>>>()
+var SolveHistoryContext = createStateContext(emptySet<String>())
 
-var BannedWordsContext = createContext<StateInstance<Set<String>>>()
+var BannedWordsContext = createStateContext(emptySet<String>())
 
 val BaseModule = FC<PropsWithChildren> { props ->
   val themeState: StateInstance<Theme> = useState { Themes.Light }
@@ -57,3 +58,6 @@ val BaseModule = FC<PropsWithChildren> { props ->
     }
   }
 }
+
+private fun <T> createStateContext(initialValue: T): Context<StateInstance<T>> =
+  createContext(useState { initialValue })

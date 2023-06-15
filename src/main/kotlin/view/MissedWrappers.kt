@@ -1,6 +1,8 @@
 package view
 
-import mui.material.*
+import mui.material.InputBaseProps
+import mui.material.TextFieldProps
+import mui.system.BoxProps
 
 inline var BoxProps.gap: Int
     get() = TODO("Prop is write-only!")

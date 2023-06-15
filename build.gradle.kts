@@ -5,7 +5,7 @@ plugins {
 fun kotlinw(target: String): String =
     "org.jetbrains.kotlin-wrappers:kotlin-$target"
 
-val kotlinWrappersVersion = "1.0.0-pre.502"
+val kotlinWrappersVersion = "1.0.0-pre.568"
 
 dependencies {
     testImplementation(kotlin("test"))

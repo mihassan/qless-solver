@@ -1,8 +1,5 @@
 package view
 
-import csstype.Position
-import csstype.integer
-import csstype.number
 import kotlinx.browser.window
 import mui.icons.material.DarkMode
 import mui.icons.material.GitHub
@@ -25,6 +22,9 @@ import react.dom.html.ReactHTML
 import react.useContext
 import react.useEffect
 import react.useEffectOnce
+import web.cssom.Position
+import web.cssom.integer
+import web.cssom.number
 
 val Header = FC<Props> {
   var theme by useContext(ThemeContext)

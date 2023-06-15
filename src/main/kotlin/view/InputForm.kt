@@ -1,9 +1,5 @@
 package view
 
-import csstype.FontSize
-import csstype.FontWeight
-import csstype.TextAlign
-import csstype.px
 import js.core.jso
 import model.AppState
 import model.AppState.Companion.editInput
@@ -15,6 +11,10 @@ import react.FC
 import react.Props
 import react.dom.onChange
 import react.useContext
+import web.cssom.FontSize
+import web.cssom.FontWeight
+import web.cssom.TextAlign
+import web.cssom.px
 import web.html.HTMLInputElement
 
 val InputForm = FC<Props> {

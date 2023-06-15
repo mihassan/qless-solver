@@ -1,7 +1,6 @@
 package view
 
 import controller.Solver
-import csstype.AlignItems
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -19,6 +18,7 @@ import react.FC
 import react.Props
 import react.useContext
 import react.useEffect
+import web.cssom.AlignItems
 
 val Content = FC<Props> {
   val mainScope = MainScope()

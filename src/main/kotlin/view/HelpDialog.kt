@@ -1,6 +1,5 @@
 package view
 
-import csstype.ListStylePosition
 import emotion.react.css
 import model.ModalState
 import mui.material.Dialog
@@ -13,6 +12,7 @@ import react.dom.html.ReactHTML.li
 import react.dom.html.ReactHTML.p
 import react.dom.html.ReactHTML.ul
 import react.useContext
+import web.cssom.ListStylePosition
 
 val HelpDialog = FC<Props> {
   var modalState by useContext(ModalStateContext)

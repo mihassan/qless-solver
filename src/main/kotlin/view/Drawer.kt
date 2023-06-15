@@ -4,8 +4,6 @@ import controller.DictionaryLoader
 import controller.DictionarySize
 import controller.DictionaryType
 import controller.Strategy
-import csstype.Color
-import csstype.rem
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -15,7 +13,7 @@ import model.Configuration
 import model.ModalState
 import mui.material.Checkbox
 import mui.material.Divider
-import mui.material.DrawerAnchor.left
+import mui.material.DrawerAnchor.Companion.left
 import mui.material.FormControl
 import mui.material.FormControlLabel
 import mui.material.FormControlVariant
@@ -39,6 +37,8 @@ import react.create
 import react.useContext
 import react.useEffect
 import react.useEffectOnce
+import web.cssom.Color
+import web.cssom.rem
 
 private const val MAX_SOLVE_HISTORY = 10
 

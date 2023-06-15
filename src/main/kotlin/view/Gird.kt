@@ -1,16 +1,6 @@
 package view
 
 import controller.WordDefinitions
-import csstype.AlignItems
-import csstype.Color
-import csstype.Display
-import csstype.FontSize
-import csstype.FontWeight
-import csstype.JustifyContent
-import csstype.UserSelect
-import csstype.fr
-import csstype.px
-import csstype.vmin
 import js.core.jso
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -41,6 +31,16 @@ import react.dom.html.ReactHTML
 import react.useContext
 import react.useEffectOnce
 import react.useState
+import web.cssom.AlignItems
+import web.cssom.Color
+import web.cssom.Display
+import web.cssom.FontSize
+import web.cssom.FontWeight
+import web.cssom.JustifyContent
+import web.cssom.UserSelect
+import web.cssom.fr
+import web.cssom.px
+import web.cssom.vmin
 import web.dom.Element
 import web.navigator.navigator
 
@@ -74,8 +74,8 @@ val Grid = FC<GridProps> { props ->
     sx {
       display = Display.inlineGrid
       gap = 8.px
-      gridTemplateRows = csstype.repeat(props.board.rowCount(), 1.fr)
-      gridTemplateColumns = csstype.repeat(props.board.columnCount(), 1.fr)
+      gridTemplateRows = web.cssom.repeat(props.board.rowCount(), 1.fr)
+      gridTemplateColumns = web.cssom.repeat(props.board.columnCount(), 1.fr)
     }
     tabIndex = 0
 
