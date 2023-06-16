@@ -95,7 +95,7 @@ val Drawer = FC<Props> {
       window.localStorage.setItem("dictionaryType", configuration.dictionaryType.name)
       window.localStorage.setItem("dictionarySize", configuration.dictionarySize.name)
 
-      appState = prevAppState
+      appState = prevAppState.solve()
       modalState = modalState.closeDrawer()
     }
   }
