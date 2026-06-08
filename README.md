@@ -1,5 +1,7 @@
 # Q-Less Game Solver
 
+**Status: [Utility/Tool]**
+
 This is a simple web app that solves the Q-less word game written in Kotlin-js
 with react. [Q-Less](https://q-lessgame.com/) is a crossword solitaire game
 where 12 dice with 6 letters on each side are rolled, and the player must use
